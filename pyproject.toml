@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 click = "^8.1.7"
 rq = "^1.15.1"
+rq-scheduler = "^0.13.1"
 
 
 [build-system]

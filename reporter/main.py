@@ -2,12 +2,12 @@ import importlib
 import importlib.util
 import logging
 import os
-import types
-
-from redis import Redis
 
 import click
+from redis import Redis
 from rq import Queue, Worker
+
+from rq_scheduler import Scheduler
 
 from .globals import Role, g
 
@@ -66,9 +66,32 @@ def main(verbose, log_to, redis_url):
     help="Python checker script location",
 )
 def worker(python_checker):
-    load_checkers(python_checker)
     g.role = Role.WORKER
+    load_checkers(python_checker)
     start_worker()
+
+
+@main.command()
+@click.option(
+    "-p",
+    "--python-checker",
+    type=click.Path(),
+    default=None,
+    help="Python checker script location",
+)
+def planner(python_checker):
+    g.role = Role.PLANNER
+    g.scheduler = Scheduler(
+        queue=g.checker_queue, connection=g.checker_queue.connection
+    )
+
+    # cancel the existing jobs
+    list_of_job_instances = g.scheduler.get_jobs()
+    for j in list_of_job_instances:
+        g.scheduler.cancel(j)
+        logger.info("job %s has been canceled", j)
+
+    load_checkers(python_checker)
 
 
 def load_checkers(path):
@@ -81,33 +104,10 @@ def load_checkers(path):
             logger.info("import python file: %s", abs_path)
 
             module_name = abs_path[:-3].replace("/", ".")
-            spec = importlib.util.spec_from_file_location(module_name, abs_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+            importlib.import_module(module_name)
     logger.info("Loading checkers done: %s", g.target_checkers)
 
 
 def start_worker():
     w = Worker([g.checker_queue], connection=g.redis)
     w.work()
-
-
-def check_target(target):
-    checker_func = get_checker(target)
-    result = checker_func()
-
-    if isinstance(result, tuple):
-        return result
-    if isinstance(result, types.GeneratorType):
-        for target in result:
-            queue_target(target)
-
-
-def get_checker(target):
-    target_type = target.__class__.__qualname__
-    checker_func = g.target_checkers[target_type]
-    return checker_func
-
-
-def queue_target(target):
-    g.checker_queue.enqueue(check_target, target)

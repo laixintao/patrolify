@@ -11,6 +11,7 @@ class Role(Enum):
 @dataclass
 class Global:
     target_checkers: Dict = field(default_factory=dict)
+    triggers: Dict = field(default_factory=dict)
     checker_queue = None
     scheduler = None
     role: Role = Role.WORKER

@@ -1,6 +1,8 @@
 import logging
+from datetime import datetime
 from reporter.exceptions import UsageError
 from .globals import g, Role
+from .queue_jobs import trigger_target
 
 
 logger = logging.getLogger(__name__)
@@ -8,10 +10,9 @@ logger = logging.getLogger(__name__)
 
 def check(target_cls):
     def wrapper(func):
-        target_type_name = target_cls.__module__ + "." + target_cls.__qualname__
-        logger.info("Register checker for target: %s", target_type_name)
+        logger.info("Register checker for target: %s", target_cls)
         # register the target checker
-        g.target_checkers[target_type_name] = func
+        g.target_checkers[target_cls] = func
         return func
 
     return wrapper
@@ -24,14 +25,29 @@ def trigger(interval_seconds=None, cron_string=None):
     scheduler = g.scheduler
 
     def wrapper(func):
+        funcname = f"{func.__module__}/{func.__name__}"
         if g.role != Role.PLANNER:
+            g.triggers[funcname] = func
+            logger.info("Regisgered a trigger: %s", funcname)
             return func
+        logger.info(
+            "Schedule jobs func %s for interval_seconds=%s, cron_string=%s",
+            funcname,
+            interval_seconds,
+            cron_string,
+        )
         if interval_seconds:
-            scheduler.schedule(func=func, interval=interval_seconds)
+            scheduler.schedule(
+                scheduled_time=datetime.utcnow(),
+                func=trigger_target,
+                interval=interval_seconds,
+                args=[funcname],
+            )
         else:
             scheduler.schedule(
                 cron_string,
-                func=func,
+                func=trigger_target,
+                args=[funcname],
             )
         # TODO schedule jobs
         return func

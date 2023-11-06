@@ -2,6 +2,12 @@ import OpenSSL
 import ssl
 from reporter.decorators import check, trigger
 from reporter.target import Target
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+logger.info("loading the checker... contrib")
 
 
 class SiteTarget(Target):
@@ -13,10 +19,11 @@ class SiteTarget(Target):
 def check_site(target):
     cert = ssl.get_server_certificate(("www.google.com", 443))
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
-    x509.get_notAfter()
+    time = x509.get_notAfter()
+    return True, time
 
 
-@trigger(interval_seconds=3 * 60)
+@trigger(interval_seconds=1 * 60)
 def generate_jobs():
     for domain in [
         "www.google.com",
