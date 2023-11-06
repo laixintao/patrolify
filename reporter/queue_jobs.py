@@ -13,19 +13,19 @@ def check_target(target):
     return paorcess_result(result)
 
 
+def trigger_target(funcname):
+    logger.info("Start running the trigger function: %s", funcname)
+    trigger = g.triggers[funcname]
+    result = trigger()
+    return paorcess_result(result)
+
+
 def paorcess_result(result):
     if isinstance(result, tuple):
         return result
     if isinstance(result, types.GeneratorType):
         for target in result:
             queue_target(target)
-
-
-def trigger_target(funcname):
-    logger.info("Start running the trigger function: %s", funcname)
-    trigger = g.triggers[funcname]
-    result = trigger()
-    return paorcess_result(result)
 
 
 def get_checker(target):
