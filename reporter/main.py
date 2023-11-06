@@ -1,13 +1,15 @@
 import importlib
-
 import importlib.util
 import logging
 import os
 import types
 
-import click
+from redis import Redis
 
-from .globals import g
+import click
+from rq import Queue, Worker
+
+from .globals import Role, g
 
 
 logger = logging.getLogger(__name__)
@@ -47,9 +49,12 @@ def setup_log(enabled, level, loglocation):
     default=None,
     help="Printing logs to a file, for debugging, default is no logs.",
 )
-def main(verbose, log_to):
+@click.option("-r", "--redis-url", help="Redis url as the job queue")
+def main(verbose, log_to, redis_url):
     log_level = LOG_LEVEL[verbose]
     setup_log(log_to is not None, log_level, log_to)
+    g.redis = Redis.from_url(redis_url)
+    g.checker_queue = Queue("checker", connection=g.redis)
 
 
 @main.command()
@@ -62,7 +67,7 @@ def main(verbose, log_to):
 )
 def worker(python_checker):
     load_checkers(python_checker)
-    g.role = "worker"
+    g.role = Role.WORKER
     start_worker()
 
 
@@ -79,10 +84,12 @@ def load_checkers(path):
             spec = importlib.util.spec_from_file_location(module_name, abs_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
+    logger.info("Loading checkers done: %s", g.target_checkers)
 
 
 def start_worker():
-    pass
+    w = Worker([g.checker_queue], connection=g.redis)
+    w.work()
 
 
 def check_target(target):

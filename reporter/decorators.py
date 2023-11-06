@@ -1,6 +1,6 @@
 import logging
 from reporter.exceptions import UsageError
-from .globals import g
+from .globals import g, Role
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def trigger(interval_seconds=None, cron_string=None):
     scheduler = g.scheduler
 
     def wrapper(func):
-        if g.role != "scheduler":
+        if g.role != Role.PLANNER:
             return func
         if interval_seconds:
             scheduler.schedule(func=func, interval=interval_seconds)

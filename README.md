@@ -36,10 +36,11 @@ A check function can:
 
 ### How to deploy?
 
-Reporter has 3 components:
+Reporter has 4 components:
 
 - scheduler
 - worker
+- planner (runs only when crontab changed, not a daemon process)
 - admin-web
 
 Architecture:
