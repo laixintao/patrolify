@@ -47,3 +47,5 @@ def generate_jobs(time_target):
         "kawabangga.com",
     ]:
         yield SiteTarget(domain=domain)
+
+    return True, "The job has been started"

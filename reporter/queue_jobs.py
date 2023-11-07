@@ -2,6 +2,7 @@ import json
 import logging
 import time
 import types
+from reporter.consts import GLOBAL_TTL_SECONDS
 
 from reporter.target import TimeTriggerTarget
 
@@ -26,10 +27,17 @@ def trigger_target(funcname):
     logger.info("Start running the trigger function: %s", funcname)
     target = TimeTriggerTarget()
 
+    redis = g.redis
+    exat = int(time.time() + GLOBAL_TTL_SECONDS)
+    redis.set(target.scheduled_count_key, 1, exat=exat)
+    redis.set(target.finished_count_key, 0, exat=exat)
+    redis.set(target.started_time_key, time.time(), exat=exat)
+
     threadlocal.current_target = target
     trigger = g.triggers[funcname]
     result = trigger(target)
-    return process_result(result, target)
+
+    process_result(result, target)
 
 
 def process_result(result, target):
@@ -45,6 +53,24 @@ def process_result(result, target):
             check_result = e.value
             store_check_result(check_result, target)
 
+    incr_task_count_and_check_finsihed(target)
+
+
+def incr_task_count_and_check_finsihed(target):
+    redis = g.redis
+
+    finished_count = redis.incr(target.finished_count_key)
+    scheduled_count = int(redis.get(target.scheduled_count_key))
+
+    if finished_count == scheduled_count:
+        logger.info(
+            "all tasks has been finsiehd, %s=%d, %s=%d",
+            target.scheduled_count_key,
+            scheduled_count,
+            target.finished_count_key,
+            finished_count,
+        )
+
 
 def get_checker(target):
     target_type = target.__class__
@@ -53,6 +79,8 @@ def get_checker(target):
 
 
 def queue_target(target):
+    redis = g.redis
+    redis.incr(target.scheduled_count_key)
     g.checker_queue.enqueue(check_target, target)
 
 

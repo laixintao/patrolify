@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import logging
 import time
@@ -20,6 +19,18 @@ class Target:
             self.parent_target = threadlocal.current_target.job_id
         else:
             self.parent_target = None
+
+    @property
+    def scheduled_count_key(self):
+        return f"reporter:{self.check_name}:{self.check_id}:scheduled"
+
+    @property
+    def finished_count_key(self):
+        return f"reporter:{self.check_name}:{self.check_id}:finished"
+
+    @property
+    def started_time_key(self):
+        return f"reporter:{self.check_name}:{self.check_id}:started_timestamp"
 
 
 class TimeTriggerTarget(Target):
