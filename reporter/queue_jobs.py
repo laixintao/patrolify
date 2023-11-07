@@ -1,7 +1,5 @@
 import json
 import logging
-from pathlib import Path
-import threading
 import time
 import types
 
@@ -24,9 +22,12 @@ def check_target(target):
 def trigger_target(funcname):
     threadlocal.check_id = str(int(time.time()))
     threadlocal.check_name = funcname
+
     logger.info("Start running the trigger function: %s", funcname)
-    trigger = g.triggers[funcname]
     target = TimeTriggerTarget()
+
+    threadlocal.current_target = target
+    trigger = g.triggers[funcname]
     result = trigger(target)
     return process_result(result, target)
 
@@ -52,6 +53,7 @@ def queue_target(target):
 def restore_thread_local(target):
     threadlocal.check_id = target.check_id
     threadlocal.check_name = target.check_name
+    threadlocal.current_target = target
 
 
 def store_check_result(result, target):
@@ -69,6 +71,7 @@ def store_check_result(result, target):
             "reason": reason,
             "job_id": target.job_id,
             "target": str(target),
+            "parent_target_id": target.parent_target,
         }
 
         with open(str(result_dir / target.job_id) + ".json", "w") as f:
