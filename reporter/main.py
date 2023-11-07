@@ -2,6 +2,7 @@ import importlib
 import importlib.util
 import logging
 import os
+import pathlib
 
 import click
 from redis import Redis
@@ -65,8 +66,16 @@ def main(verbose, log_to, redis_url):
     default=None,
     help="Python checker script location",
 )
-def worker(python_checker):
+@click.option(
+    "-r",
+    "--result-path",
+    type=click.Path(),
+    default=None,
+    help="Where to save the results",
+)
+def worker(python_checker, result_path):
     g.role = Role.WORKER
+    g.result_path = pathlib.Path(result_path)
     load_checkers(python_checker)
     start_worker()
 

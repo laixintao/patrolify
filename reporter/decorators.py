@@ -1,7 +1,9 @@
-import logging
 from datetime import datetime
+import logging
+
 from reporter.exceptions import UsageError
-from .globals import g, Role
+
+from .globals import Role, g
 from .queue_jobs import trigger_target
 
 
@@ -25,7 +27,7 @@ def trigger(interval_seconds=None, cron_string=None):
     scheduler = g.scheduler
 
     def wrapper(func):
-        funcname = f"{func.__module__}/{func.__name__}"
+        funcname = f"{func.__module__}.{func.__name__}"
         if g.role != Role.PLANNER:
             g.triggers[funcname] = func
             logger.info("Regisgered a trigger: %s", funcname)

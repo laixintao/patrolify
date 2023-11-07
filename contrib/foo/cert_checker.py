@@ -12,6 +12,7 @@ logger.info("loading the checker... contrib")
 
 class SiteTarget(Target):
     def __init__(self, domain):
+        super().__init__()
         self.domain = domain
 
 
@@ -20,11 +21,11 @@ def check_site(target):
     cert = ssl.get_server_certificate(("www.google.com", 443))
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
     time = x509.get_notAfter()
-    return True, time
+    return True, time.decode()
 
 
 @trigger(interval_seconds=1 * 60)
-def generate_jobs():
+def generate_jobs(time_target):
     for domain in [
         "www.google.com",
         "www.twitter.com",
