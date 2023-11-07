@@ -1,4 +1,5 @@
 import OpenSSL
+from datetime import datetime
 import ssl
 from reporter.decorators import check, trigger
 from reporter.target import Target
@@ -15,13 +16,26 @@ class SiteTarget(Target):
         super().__init__()
         self.domain = domain
 
+    def __str__(self) -> str:
+        return self.domain
+
 
 @check(SiteTarget)
 def check_site(target):
-    cert = ssl.get_server_certificate(("www.google.com", 443))
+    domain = target.domain
+    cert = ssl.get_server_certificate((domain, 443))
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
     time = x509.get_notAfter()
-    return True, time.decode()
+    date_string = time.decode()
+    format_string = "%Y%m%d%H%M%SZ"
+    parsed_datetime = datetime.strptime(date_string, format_string)
+
+    days = (parsed_datetime - datetime.now()).days
+
+    if days > 30:
+        return True, f"{target.domain} will be expired in {days}days."
+    else:
+        return False, f"{target.domain} will be expired in {days}days."
 
 
 @trigger(interval_seconds=1 * 60)
