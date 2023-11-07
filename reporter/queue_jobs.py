@@ -35,9 +35,15 @@ def trigger_target(funcname):
 def process_result(result, target):
     if isinstance(result, tuple):
         store_check_result(result, target)
+
     if isinstance(result, types.GeneratorType):
-        for target in result:
-            queue_target(target)
+        try:
+            while True:
+                t = next(result)
+                queue_target(t)
+        except StopIteration as e:
+            check_result = e.value
+            store_check_result(check_result, target)
 
 
 def get_checker(target):
@@ -57,23 +63,32 @@ def restore_thread_local(target):
 
 
 def store_check_result(result, target):
-    if isinstance(result, tuple):
+    data = {
+        "job_id": target.job_id,
+        "target": str(target),
+        "parent_target_id": target.parent_target,
+        "run_success": None,
+        "check_pass": None,
+        "reason": None,
+    }
+
+    if result is None:
+        pass
+    elif isinstance(result, tuple):
         boolresult, reason = result
-        check_name = target.check_name
-        check_id = target.check_id
 
-        result_dir = g.result_path / check_name / check_id
-        result_dir.mkdir(parents=True, exist_ok=True)
+        data.update(
+            {
+                "run_success": True,
+                "check_pass": boolresult,
+                "reason": reason,
+            }
+        )
 
-        data = {
-            "run_success": True,
-            "check_pass": boolresult,
-            "reason": reason,
-            "job_id": target.job_id,
-            "target": str(target),
-            "parent_target_id": target.parent_target,
-        }
-
-        with open(str(result_dir / target.job_id) + ".json", "w") as f:
-            json.dump(data, f)
-            logger.info("Job result has been saved to %s", f)
+    check_name = target.check_name
+    check_id = target.check_id
+    result_dir = g.result_path / check_name / check_id
+    result_dir.mkdir(parents=True, exist_ok=True)
+    with open(str(result_dir / target.job_id) + ".json", "w") as f:
+        json.dump(data, f)
+        logger.info("Job result has been saved to %s", f)

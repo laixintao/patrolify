@@ -1,6 +1,9 @@
-import time
+
+from datetime import datetime
 import logging
+import time
 import uuid
+
 from .globals import threadlocal
 
 
@@ -22,4 +25,9 @@ class Target:
 class TimeTriggerTarget(Target):
     def __init__(self) -> None:
         super().__init__()
-        self.trigger_timestamp = time.time
+        self.trigger_timestamp = time.time()
+
+    def __str__(self):
+        datetime_obj = datetime.fromtimestamp(self.trigger_timestamp)
+        formatted_string = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+        return f"Trigger at {formatted_string}"
