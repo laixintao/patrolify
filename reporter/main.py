@@ -11,6 +11,7 @@ from rq import Queue, Worker
 from rq_scheduler import Scheduler
 
 from .globals import Role, g
+from .reports import generate_report
 
 
 logger = logging.getLogger(__name__)
@@ -103,18 +104,14 @@ def planner(python_checker):
     load_checkers(python_checker)
 
 
-def load_checkers(path):
-    for root, _, files in os.walk(path):
-        for file in files:
-            abs_path = os.path.join(root, file)
-            if not file.endswith(".py"):
-                logger.debug("%s is not ending with .py, ignore...", abs_path)
-                continue
-            logger.info("import python file: %s", abs_path)
-
-            module_name = abs_path[:-3].replace("/", ".")
-            importlib.import_module(module_name)
-    logger.info("Loading checkers done: %s", g.target_checkers)
+@main.command(help="Manually generate reports")
+@click.option("--check_name", help="The check job's name")
+@click.option("--check_id", help="The ID of one check, it's normally an int timestamp")
+def generate_reports(check_name, check_id):
+    logger.info(
+        "Manually trigger generate report for job=%s, check_id=%s", check_name, check_id
+    )
+    generate_report(check_name, check_id)
 
 
 def start_worker():

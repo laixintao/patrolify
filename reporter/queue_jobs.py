@@ -7,6 +7,7 @@ from reporter.consts import GLOBAL_TTL_SECONDS
 from reporter.target import TimeTriggerTarget
 
 from .globals import g, threadlocal
+from .reports import generate_report
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,7 @@ def incr_task_count_and_check_finsihed(target):
             target.finished_count_key,
             finished_count,
         )
+        g.checker_queue.enqueue(generate_report, target.check_name, target.check_id)
 
 
 def get_checker(target):
