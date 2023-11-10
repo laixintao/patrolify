@@ -105,9 +105,18 @@ def planner(python_checker):
 
 
 @main.command(help="Manually generate reports")
-@click.option("--check_name", help="The check job's name")
-@click.option("--check_id", help="The ID of one check, it's normally an int timestamp")
-def generate_reports(check_name, check_id):
+@click.option("--check-name", help="The check job's name")
+@click.option("--check-id", help="The ID of one check, it's normally an int timestamp")
+@click.option(
+    "-r",
+    "--result-path",
+    type=click.Path(),
+    default=None,
+    help="Where to save the results",
+)
+def generate_reports(check_name, check_id, result_path):
+    g.role = Role.REPORTER
+    g.result_path = result_path
     logger.info(
         "Manually trigger generate report for job=%s, check_id=%s", check_name, check_id
     )

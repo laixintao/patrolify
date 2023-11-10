@@ -117,7 +117,7 @@ def store_check_result(result, target):
 
     check_name = target.check_name
     check_id = target.check_id
-    result_dir = g.result_path / check_name / check_id
+    result_dir = g.result_dir(check_name, check_id)
     result_dir.mkdir(parents=True, exist_ok=True)
     with open(str(result_dir / target.job_id) + ".json", "w") as f:
         json.dump(data, f)
