@@ -36,6 +36,19 @@ def setup_log(enabled, level, loglocation):
     logger.info("------ reporter ------")
 
 
+def load_checkers(path):
+    for root, _, files in os.walk(path):
+        for file in files:
+            abs_path = os.path.join(root, file)
+            if not file.endswith(".py"):
+                logger.debug("%s is not ending with .py, ignore...", abs_path)
+                continue
+            logger.info("import python file: %s", abs_path)
+
+            module_name = abs_path[:-3].replace("/", ".")
+            importlib.import_module(module_name)
+    logger.info("Loading checkers done: %s", g.target_checkers)
+
 @click.group()
 @click.option(
     "-v",

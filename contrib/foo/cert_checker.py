@@ -44,7 +44,10 @@ def generate_jobs(time_target):
         "www.google.com",
         "www.twitter.com",
         "www.github.com",
+        "abc.com",
+        "asdf.com",
         "kawabangga.com",
+        "aaaaaaaaaaaaaaaaaaaaaa.com",
     ]:
         yield SiteTarget(domain=domain)
 
