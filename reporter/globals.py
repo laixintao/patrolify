@@ -17,6 +17,7 @@ class Global:
     target_checkers: Dict = field(default_factory=dict)
     triggers: Dict = field(default_factory=dict)
     checker_queue = None
+    reporter_queue = None
     scheduler = None
     role: Role = Role.WORKER
     redis = None
