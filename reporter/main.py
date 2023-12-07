@@ -1,4 +1,5 @@
 import importlib
+import waitress
 import importlib.util
 import logging
 import os
@@ -12,6 +13,7 @@ from rq_scheduler import Scheduler
 
 from .globals import Role, g
 from .reports import generate_report
+from .admin import create_app
 
 
 logger = logging.getLogger(__name__)
@@ -158,6 +160,33 @@ def generate_reports(check_name, check_id, result_path):
     )
     generate_report(check_name, check_id)
 
+@main.command(help="Admin web HTTP server")
+@click.option(
+    "--host", "-h", default="127.0.0.1", help="The interface to bind to."
+)
+@click.option("--port", "-p", default=8080, help="The port to bind to.")
+@click.option(
+    "--connection-limit", "-c", default=1000, help="Server connection limit"
+)
+@click.option("--threads", "-t", default=64, help="Server threads")
+@click.option(
+    "--url_prefix",
+    "-r",
+    default="",
+    help=(
+        "The global url prefix, if set to /foo, then /targets will be"
+        " available under /foo/targets"
+    ),
+)
+def admin(host, port, connection_limit, threads, url_prefix):
+    app = create_app(url_prefix)
+    waitress.serve(
+        app,
+        host=host,
+        port=port,
+        connection_limit=connection_limit,
+        threads=threads,
+    )
 
 def start_worker(queue):
     w = Worker(queue, connection=g.redis)
