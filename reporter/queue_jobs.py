@@ -71,7 +71,7 @@ def incr_task_count_and_check_finsihed(target):
             target.finished_count_key,
             finished_count,
         )
-        g.checker_queue.enqueue(generate_report, target.check_name, target.check_id)
+        g.reporter_queue.enqueue(generate_report, target.check_name, target.check_id)
 
 
 def get_checker(target):

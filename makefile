@@ -3,7 +3,7 @@ run-planner:
 
 
 run-worker:
-	poetry run reporter --redis-url redis://127.0.0.1:6379 --log-to=reporter.log -vvv worker --python-checker contrib --result-path results
+	poetry run reporter --redis-url redis://127.0.0.1:6379 --log-to=reporter.log -vvv worker --python-checker contrib --result-path results --queue checker --queue reporter
 
 
 run-scheduler:

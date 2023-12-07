@@ -49,6 +49,7 @@ def load_checkers(path):
             importlib.import_module(module_name)
     logger.info("Loading checkers done: %s", g.target_checkers)
 
+
 @click.group()
 @click.option(
     "-v",
@@ -70,6 +71,7 @@ def main(verbose, log_to, redis_url):
     setup_log(log_to is not None, log_level, log_to)
     g.redis = Redis.from_url(redis_url)
     g.checker_queue = Queue("checker", connection=g.redis)
+    g.reporter_queue = Queue("reporter", connection=g.redis)
 
 
 @main.command()
@@ -87,11 +89,32 @@ def main(verbose, log_to, redis_url):
     default=None,
     help="Where to save the results",
 )
-def worker(python_checker, result_path):
+@click.option(
+    "--queue",
+    "-q",
+    multiple=True,
+    help=(
+        "work for which queue? queue type: 1) checker 2) reporter, for generating"
+        " reports. If you use the file system as the report store, you should only run"
+        " one worker for the reporter queue."
+    ),
+)
+def worker(python_checker, result_path, queue):
+    queue_map = {
+        "checker": g.checker_queue,
+        'reporter': g.reporter_queue,
+    }
+
+    _queue = []
+    for item in queue:
+        if item not in queue_map:
+            raise click.UsageError(f"Queue {item} not in {','.join(queue_map.keys())}", ctx=None)
+        _queue.append(queue_map[item])
+
     g.role = Role.WORKER
     g.result_path = pathlib.Path(result_path)
     load_checkers(python_checker)
-    start_worker()
+    start_worker(_queue)
 
 
 @main.command()
@@ -136,6 +159,6 @@ def generate_reports(check_name, check_id, result_path):
     generate_report(check_name, check_id)
 
 
-def start_worker():
-    w = Worker([g.checker_queue], connection=g.redis)
+def start_worker(queue):
+    w = Worker(queue, connection=g.redis)
     w.work()
