@@ -1,3 +1,5 @@
+import shutil
+
 import logging
 import glob
 from typing import List
@@ -28,6 +30,7 @@ class MainResult:
 def generate_report(check_name, check_id):
     logger.info("Start to generate reports for %s check_id=%s", check_name, check_id)
     check_directory = g.result_dir(check_name, check_id)
+    report_directory = g.report_dir(check_name, check_id)
 
     main_reuslt = MainResult()
     for file in glob.glob(str(check_directory / "*-*-*-*-*.json")):
@@ -47,4 +50,6 @@ def generate_report(check_name, check_id):
     with open(main_result_location, "w") as f:
         json.dump(main_reuslt, f, cls=EnhancedJSONEncoder)
 
-    logger.info("result has been writen to %s", main_result_location)
+    shutil.move(check_directory, report_directory)
+
+    logger.info("result has been writen to %s", report_directory)

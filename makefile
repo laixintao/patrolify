@@ -10,4 +10,7 @@ run-scheduler:
 	rqscheduler --host localhost --port 6379 --db 0
 
 run-admin:
-	poetry run reporter --redis-url redis://127.0.0.1:6379 --log-to=reporter-admin.log -vvv admin -p 8084
+	poetry run reporter --redis-url redis://127.0.0.1:6379 --log-to=reporter-admin.log -vvv admin --port 8084 --python-checker contrib
+
+run-admin-web:
+	cd reporter/admin/web && PORT=3004 yarn start

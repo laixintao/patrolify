@@ -104,13 +104,15 @@ def main(verbose, log_to, redis_url):
 def worker(python_checker, result_path, queue):
     queue_map = {
         "checker": g.checker_queue,
-        'reporter': g.reporter_queue,
+        "reporter": g.reporter_queue,
     }
 
     _queue = []
     for item in queue:
         if item not in queue_map:
-            raise click.UsageError(f"Queue {item} not in {','.join(queue_map.keys())}", ctx=None)
+            raise click.UsageError(
+                f"Queue {item} not in {','.join(queue_map.keys())}", ctx=None
+            )
         _queue.append(queue_map[item])
 
     g.role = Role.WORKER
@@ -160,26 +162,25 @@ def generate_reports(check_name, check_id, result_path):
     )
     generate_report(check_name, check_id)
 
+
 @main.command(help="Admin web HTTP server")
-@click.option(
-    "--host", "-h", default="127.0.0.1", help="The interface to bind to."
-)
-@click.option("--port", "-p", default=8080, help="The port to bind to.")
-@click.option(
-    "--connection-limit", "-c", default=1000, help="Server connection limit"
-)
+@click.option("--host", default="127.0.0.1", help="The interface to bind to.")
+@click.option("--port", default=8080, help="The port to bind to.")
+@click.option("--connection-limit", "-c", default=1000, help="Server connection limit")
 @click.option("--threads", "-t", default=64, help="Server threads")
 @click.option(
-    "--url_prefix",
-    "-r",
-    default="",
-    help=(
-        "The global url prefix, if set to /foo, then /targets will be"
-        " available under /foo/targets"
-    ),
+    "-p",
+    "--python-checker",
+    type=click.Path(),
+    default=None,
+    help="Python checker script location",
 )
-def admin(host, port, connection_limit, threads, url_prefix):
-    app = create_app(url_prefix)
+def admin(host, port, connection_limit, threads, python_checker):
+    load_checkers(python_checker)
+    g.scheduler = Scheduler(
+        queue=g.checker_queue, connection=g.checker_queue.connection
+    )
+    app = create_app()
     waitress.serve(
         app,
         host=host,
@@ -187,6 +188,7 @@ def admin(host, port, connection_limit, threads, url_prefix):
         connection_limit=connection_limit,
         threads=threads,
     )
+
 
 def start_worker(queue):
     w = Worker(queue, connection=g.redis)
