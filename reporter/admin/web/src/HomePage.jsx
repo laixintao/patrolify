@@ -1,11 +1,12 @@
-import { Spinner } from "@blueprintjs/core";
-import DataTable from "react-data-table-component";
+import { Divider, H4, H5, Spinner } from "@blueprintjs/core";
+
+import { Card } from "@blueprintjs/core";
 
 import axios from "axios";
 import React from "react";
+import "./HomePage.css";
 
 export default function HomePage() {
-
   const [checkers, setCheckers] = React.useState([]);
   const [loadingCheckers, setLoadingCheckers] = React.useState(true);
 
@@ -21,23 +22,34 @@ export default function HomePage() {
     return <Spinner />;
   }
   return (
-    <div>
-      <JobTableList checkers={checkers} />{" "}
+    <div className="main-body">
+      <JobTableList checkers={checkers} />
     </div>
   );
 }
 
-const columns = [
-  {
-    name: "Name",
-    selector: (row) => row.name,
-  },
-  {
-    name: "latest_report_timestamp",
-    selector: (row) => row.latest_report_timestamp,
-  },
-];
-
 function JobTableList({ checkers }) {
-  return <DataTable columns={columns} data={checkers} />;
+  return (
+    <Card>
+      <H4>Checker List</H4>
+      {checkers.map((c) => (
+        <Checker checker={c} key={c.name} />
+      ))}
+    </Card>
+  );
 }
+
+const Checker = ({ checker }) => {
+  return (
+    <>
+      <Divider style={{ margin: 0 }} />
+      <div className="checker-row">
+        <H5>{checker.name}</H5>
+        <p>
+          <span className="check-active">⬤ active</span>
+          <span className="updated-time">Checked 5 minustes ago</span>
+        </p>
+      </div>
+    </>
+  );
+};
