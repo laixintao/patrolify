@@ -7,6 +7,8 @@ from .globals import g
 from .consts import RESULT_FILE_NAME
 import dataclasses, json
 
+logger = logging.getLogger(__name__)
+
 
 class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, o):

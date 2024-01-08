@@ -20,6 +20,14 @@ def triggers_list():
     checkers = []
     for trigger in scheduled_triggers:
         report_path = get_latest_report_dir(trigger)
+        if not report_path:
+            checkers.append({
+                "name": trigger,
+                "latest_report_dir": None,
+                "latest_report_timestamp": None,
+                "report": None,
+            })
+            continue
         checkers.append({
             "name": trigger,
             "latest_report_dir": str(report_path),
@@ -36,6 +44,8 @@ def triggers_list():
 def get_latest_report_dir(trigger_name):
     report_dir = g.report_base_dir(trigger_name)
 
+    if not report_dir.exists():
+        return None
     report_dirs = sorted(report_dir.iterdir())
     logger.info("year list: %s", report_dirs)
 
