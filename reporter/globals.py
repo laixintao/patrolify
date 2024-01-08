@@ -34,7 +34,10 @@ class Global:
         """
         # year, month, day, hour
         time_path = datetime.utcfromtimestamp(int(check_id)).strftime("%Y/%m/%d/%H")
-        return Path(self.result_path) / check_name / "reports" / time_path / check_id
+        return self.report_base_dir(check_name) / time_path / check_id
+
+    def report_base_dir(self, check_name):
+        return Path(self.result_path) / check_name / "reports"
 
 
 g = Global()

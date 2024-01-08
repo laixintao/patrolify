@@ -4,13 +4,8 @@ import logging
 import glob
 from typing import List
 from .globals import g
+from .consts import RESULT_FILE_NAME
 import dataclasses, json
-
-
-logger = logging.getLogger(__name__)
-
-
-RESULT_FILE_NAME = "main-result.json"
 
 
 class EnhancedJSONEncoder(json.JSONEncoder):

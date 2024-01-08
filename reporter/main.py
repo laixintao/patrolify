@@ -175,8 +175,16 @@ def generate_reports(check_name, check_id, result_path):
     default=None,
     help="Python checker script location",
 )
-def admin(host, port, connection_limit, threads, python_checker):
+@click.option(
+    "-r",
+    "--result-path",
+    type=click.Path(),
+    default=None,
+    help="Where to save the results",
+)
+def admin(host, port, connection_limit, threads, python_checker, result_path):
     load_checkers(python_checker)
+    g.result_path = result_path
     g.scheduler = Scheduler(
         queue=g.checker_queue, connection=g.checker_queue.connection
     )
