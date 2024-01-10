@@ -1,0 +1,14 @@
+.job-history-list {
+  font-family: Monaco;
+  margin: 8px;
+}
+
+.job-link {
+  margin: 4px;
+}
+
+p.hint {
+  color: grey;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}

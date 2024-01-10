@@ -3,6 +3,8 @@ import axios from "axios";
 import React from "react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import { Link } from "react-router-dom";
+import "./CheckerDetailPage.css";
 
 export default function CheckerDetailPage() {
   let { checkerName } = useParams();
@@ -36,9 +38,18 @@ const CheckerDetail = ({ data, name }) => {
       <H4>{name}</H4>
       <Divider style={{ margin: 0 }} />
 
-      {reversedChecks.map((cid) => (
-        <div key={cid}>{moment.unix(cid).format()}</div>
-      ))}
+      <p className="hint">(Displayed time is the local time of your browser.)</p>
+
+      <div className="job-history-list">
+        {reversedChecks.map((cid, index) => (
+          <div key={cid} className="job-link">
+            <span> ({index}).</span>
+            <Link to={`job/${cid}`}>
+              {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
+            </Link>
+          </div>
+        ))}
+      </div>
     </Card>
   );
 };
