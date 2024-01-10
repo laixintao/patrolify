@@ -5,8 +5,8 @@ import { Card } from "@blueprintjs/core";
 
 import axios from "axios";
 import React from "react";
-import "./HomePage.css";
 import { Link } from "react-router-dom";
+import "./HomePage.css";
 
 export default function HomePage() {
   const [checkers, setCheckers] = React.useState([]);
@@ -48,7 +48,7 @@ const Checker = ({ checker }) => {
     <>
       <Divider style={{ margin: 0 }} />
       <div className="checker-row">
-        <Link to={`job/${name}`}>
+        <Link to={`checker/${name}`}>
           <H5>{name}</H5>
         </Link>
         <p>

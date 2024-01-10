@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import { FocusStyleManager } from "@blueprintjs/core";
 import HomePage from "./HomePage";
+import CheckerDetailPage from "./CheckerDetailPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -13,10 +14,10 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <HomePage />},
-      // {
-      //   path: "contacts/:contactId",
-      //   element: <Contact />,
-      // },
+      {
+        path: "checker/:checkerName",
+        element: <CheckerDetailPage />,
+      },
     ],
   },
 ]);

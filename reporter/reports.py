@@ -6,8 +6,10 @@ from typing import List
 from .globals import g
 from .consts import RESULT_FILE_NAME
 import dataclasses, json
+from redis.lock import Lock
 
 logger = logging.getLogger(__name__)
+MAX_LATEST_CHECK_ID_RECORDING = 100
 
 
 class EnhancedJSONEncoder(json.JSONEncoder):
@@ -50,3 +52,33 @@ def generate_report(check_name, check_id):
     shutil.move(check_directory, report_directory)
 
     logger.info("result has been writen to %s", report_directory)
+    update_latest_check(check_name, check_id)
+
+
+def update_latest_check(check_name, check_id):
+    """
+    write the check_id into the latest check file
+    """
+    lock = Lock(g.redis, "reporter:lock:update_latest_check_file")
+    with lock:
+        old_check_ids = get_latest_check_ids(check_name)
+
+        existing_records = len(old_check_ids)
+        if existing_records >= MAX_LATEST_CHECK_ID_RECORDING:
+            pass
+        else:
+            start = existing_records - MAX_LATEST_CHECK_ID_RECORDING + 1
+            old_check_ids = old_check_ids[start:]
+
+        old_check_ids.append(f"{check_id}\n")
+        logger.info("old check ids: %s", old_check_ids)
+        with open(g.latest_check_ids_file(check_name), "w") as f:
+            f.writelines(old_check_ids)
+
+
+def get_latest_check_ids(check_name) -> List[str]:
+    if not g.latest_check_ids_file(check_name).exists():
+        return []
+    with open(g.latest_check_ids_file(check_name), "r") as f:
+        old_check_ids = f.readlines()
+    return old_check_ids

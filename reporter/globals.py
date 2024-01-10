@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 import threading
 from typing import Callable, Dict
+from .consts import LATEST_CHECK_FILE_NAME
 
 
 class Role(Enum):
@@ -38,6 +39,9 @@ class Global:
 
     def report_base_dir(self, check_name):
         return Path(self.result_path) / check_name / "reports"
+
+    def latest_check_ids_file(self, check_name):
+        return Path(self.result_path) / check_name / LATEST_CHECK_FILE_NAME
 
 
 g = Global()

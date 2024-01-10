@@ -6,6 +6,7 @@ import {
   NavbarGroup,
   NavbarHeading,
 } from "@blueprintjs/core";
+import { Link } from "react-router-dom";
 
 export default function AppNavbar() {
   return (
@@ -13,7 +14,9 @@ export default function AppNavbar() {
       <NavbarGroup>
         <NavbarHeading>Reporter</NavbarHeading>
         <NavbarDivider />
-        <Button className={Classes.MINIMAL} icon="home" text="Home" />
+        <Link to="/">
+          <Button className={Classes.MINIMAL} icon="home" text="Home" />
+        </Link>
         <Button className={Classes.MINIMAL} icon="document" text="Files" />
       </NavbarGroup>
     </Navbar>
