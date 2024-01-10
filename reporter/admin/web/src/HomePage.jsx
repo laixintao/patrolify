@@ -1,10 +1,12 @@
 import { Divider, H4, H5, Spinner } from "@blueprintjs/core";
+import moment from "moment";
 
 import { Card } from "@blueprintjs/core";
 
 import axios from "axios";
 import React from "react";
 import "./HomePage.css";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [checkers, setCheckers] = React.useState([]);
@@ -30,7 +32,7 @@ export default function HomePage() {
 
 function JobTableList({ checkers }) {
   return (
-    <Card>
+    <Card className="job-table-list">
       <H4>Checker List</H4>
       {checkers.map((c) => (
         <Checker checker={c} key={c.name} />
@@ -40,14 +42,20 @@ function JobTableList({ checkers }) {
 }
 
 const Checker = ({ checker }) => {
+  const { latest_report_timestamp, name } = checker;
+  const last_check = moment.unix(Number(latest_report_timestamp));
   return (
     <>
       <Divider style={{ margin: 0 }} />
       <div className="checker-row">
-        <H5>{checker.name}</H5>
+        <Link to={`job/${name}`}>
+          <H5>{name}</H5>
+        </Link>
         <p>
           <span className="check-active">⬤ active</span>
-          <span className="updated-time">Checked 5 minustes ago</span>
+          <span className="updated-time">
+            last checked {last_check.from(moment())}
+          </span>
         </p>
       </div>
     </>
