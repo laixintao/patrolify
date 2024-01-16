@@ -31,24 +31,30 @@ export default function CheckerDetailPage() {
 }
 
 const CheckerDetail = ({ data, name }) => {
-  const { latest_check_ids: latestChecks } = data;
-  const reversedChecks = [...latestChecks].reverse();
+  const latestChecks = data;
+
+  console.log(latestChecks);
   return (
     <Card className="job-table-list">
       <H4>{name}</H4>
       <Divider style={{ margin: 0 }} />
 
-      <p className="hint">(Displayed time is the local time of your browser.)</p>
+      <p className="hint">
+        (Displayed time is the local time of your browser.)
+      </p>
 
       <div className="job-history-list">
-        {reversedChecks.map((cid, index) => (
-          <div key={cid} className="job-link">
-            <span> ({index}).</span>
-            <Link to={`job/${cid}`}>
-              {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
-            </Link>
-          </div>
-        ))}
+        {Object.keys(latestChecks)
+          .sort()
+          .reverse()
+          .map((cid, index) => (
+            <div key={cid} className="job-link">
+              <span> ({index}).</span>
+              <Link to={`job/${cid}`}>
+                {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
+              </Link>
+            </div>
+          ))}
       </div>
     </Card>
   );

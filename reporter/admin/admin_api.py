@@ -3,7 +3,7 @@ import logging
 from flask import Blueprint, jsonify
 from reporter.globals import g
 from reporter.consts import RESULT_FILE_NAME
-from reporter.reports import get_latest_check_ids
+from reporter.reports import get_check_report, get_latest_check_ids
 
 logger = logging.getLogger(__name__)
 admin_api_blueprint = Blueprint("admin_api", __name__, url_prefix="/api/v1")
@@ -45,7 +45,12 @@ def triggers_list():
 @admin_api_blueprint.route("/checker/<name>")
 def checker_detail(name):
     latest_check_ids = [str(x).strip() for x in get_latest_check_ids(name)]
-    return jsonify({"latest_check_ids": latest_check_ids})
+
+    result = {}
+    for check_id in latest_check_ids:
+        result[check_id] = get_check_report(name, check_id)
+    
+    return jsonify(result)
 
 
 def get_latest_report_dir(trigger_name):

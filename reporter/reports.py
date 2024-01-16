@@ -24,6 +24,7 @@ class MainResult:
     passed: List[str] = dataclasses.field(default_factory=list)
     not_passed: List[str] = dataclasses.field(default_factory=list)
     failed: List[str] = dataclasses.field(default_factory=list)
+    all_passed: bool = True
 
 
 def generate_report(check_name, check_id):
@@ -32,6 +33,7 @@ def generate_report(check_name, check_id):
     report_directory = g.report_dir(check_name, check_id)
 
     main_reuslt = MainResult()
+
     for file in glob.glob(str(check_directory / "*-*-*-*-*.json")):
         logger.debug("Parse result %s...", file)
         with open(file, "r") as f:
@@ -39,10 +41,13 @@ def generate_report(check_name, check_id):
 
         if not result["run_success"]:
             main_reuslt.failed.append(result["job_id"])
+            main_reuslt.all_passed = False
+            continue
 
         if result["check_pass"]:
             main_reuslt.passed.append(result["job_id"])
         else:
+            main_reuslt.all_passed = False
             main_reuslt.not_passed.append(result["job_id"])
 
     main_result_location = check_directory / RESULT_FILE_NAME
@@ -65,8 +70,6 @@ def update_latest_check(check_name, check_id):
 
         existing_records = len(old_check_ids)
         if existing_records >= MAX_LATEST_CHECK_ID_RECORDING:
-            pass
-        else:
             start = existing_records - MAX_LATEST_CHECK_ID_RECORDING + 1
             old_check_ids = old_check_ids[start:]
 
@@ -82,3 +85,10 @@ def get_latest_check_ids(check_name) -> List[str]:
     with open(g.latest_check_ids_file(check_name), "r") as f:
         old_check_ids = f.readlines()
     return old_check_ids
+
+
+def get_check_report(check_name, check_id):
+    with open(g.report_dir(check_name, check_id) / RESULT_FILE_NAME) as f:
+        report_result = json.load(f)
+
+    return report_result
