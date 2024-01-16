@@ -1,6 +1,7 @@
 .job-history-list {
   font-family: Monaco;
   margin: 8px;
+  padding-top: 10px;
 }
 
 .job-link {
@@ -11,4 +12,12 @@ p.hint {
   color: grey;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+}
+
+.job-item-success {
+  color: green;
+}
+
+.job-item-fail {
+  color: red;
 }

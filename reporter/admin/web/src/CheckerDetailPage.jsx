@@ -39,23 +39,38 @@ const CheckerDetail = ({ data, name }) => {
       <H4>{name}</H4>
       <Divider style={{ margin: 0 }} />
 
-      <p className="hint">
-        (Displayed time is the local time of your browser.)
-      </p>
-
       <div className="job-history-list">
         {Object.keys(latestChecks)
           .sort()
           .reverse()
           .map((cid, index) => (
-            <div key={cid} className="job-link">
-              <span> ({index}).</span>
-              <Link to={`job/${cid}`}>
-                {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
-              </Link>
-            </div>
+            <JobItem
+              cid={cid}
+              index={index}
+              key={cid}
+              checkDetail={latestChecks[cid]}
+            />
           ))}
       </div>
+      <p className="hint">
+        (Displayed time is the local time of your browser.)
+      </p>
     </Card>
+  );
+};
+
+const JobItem = ({ cid, index, checkDetail }) => {
+  return (
+    <div key={cid} className="job-link">
+      <span> ({index}).</span>
+      <Link to={`job/${cid}`}>
+        {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
+      </Link>
+      <span className="job-item-success">
+        {checkDetail.all_passed && "success"}
+      </span>
+      <span className="job-item-fail">{!checkDetail.all_passed && "fail"}</span>
+      <span>{index == 0 && "  (latest)"}</span>
+    </div>
   );
 };
