@@ -33,7 +33,6 @@ export default function CheckerDetailPage() {
 const CheckerDetail = ({ data, name }) => {
   const latestChecks = data;
 
-  console.log(latestChecks);
   return (
     <Card className="job-table-list">
       <H4>{name}</H4>
