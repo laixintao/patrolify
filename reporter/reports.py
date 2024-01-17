@@ -2,7 +2,7 @@ import shutil
 
 import logging
 import glob
-from typing import List
+from typing import Dict, List
 from .globals import g
 from .consts import RESULT_FILE_NAME
 import dataclasses, json
@@ -25,6 +25,8 @@ class MainResult:
     not_passed: List[str] = dataclasses.field(default_factory=list)
     failed: List[str] = dataclasses.field(default_factory=list)
     all_passed: bool = True
+    job_info: Dict[str, Dict] = dataclasses.field(default_factory=dict)
+    start_job_id: str | None = None
 
 
 def generate_report(check_name, check_id):
@@ -32,27 +34,45 @@ def generate_report(check_name, check_id):
     check_directory = g.result_dir(check_name, check_id)
     report_directory = g.report_dir(check_name, check_id)
 
-    main_reuslt = MainResult()
+    main_result = MainResult()
 
     for file in glob.glob(str(check_directory / "*-*-*-*-*.json")):
         logger.debug("Parse result %s...", file)
         with open(file, "r") as f:
             result = json.load(f)
 
+        # save job information
+        job_id = result["job_id"]
+        target_name = result["target"]
+        job_info = main_result.job_info.setdefault(job_id, {})
+        job_info["target"] = target_name
+        job_info["run_success"] = result['run_success']
+        job_info["check_pass"] = result['check_pass']
+        job_info.setdefault("child_job_ids", [])
+
+        # save job's relation
+        parent_id = result["parent_target_id"]
+        if parent_id is None:
+            main_result.start_job_id = job_id
+        else:
+            parent = main_result.job_info.setdefault(parent_id, {})
+            parent.setdefault("child_job_ids", []).append(job_id)
+
+        # save result
         if not result["run_success"]:
-            main_reuslt.failed.append(result["job_id"])
-            main_reuslt.all_passed = False
+            main_result.failed.append(result["job_id"])
+            main_result.all_passed = False
             continue
 
         if result["check_pass"]:
-            main_reuslt.passed.append(result["job_id"])
+            main_result.passed.append(result["job_id"])
         else:
-            main_reuslt.all_passed = False
-            main_reuslt.not_passed.append(result["job_id"])
+            main_result.all_passed = False
+            main_result.not_passed.append(result["job_id"])
 
     main_result_location = check_directory / RESULT_FILE_NAME
     with open(main_result_location, "w") as f:
-        json.dump(main_reuslt, f, cls=EnhancedJSONEncoder)
+        json.dump(main_result, f, cls=EnhancedJSONEncoder)
 
     shutil.move(check_directory, report_directory)
 

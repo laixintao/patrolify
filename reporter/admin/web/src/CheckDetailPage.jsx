@@ -29,12 +29,16 @@ export default function CheckDetailPage() {
       {moment.unix(checkId).format("YYYY-MM-DD HH:mm z")}
     </H5>
 
+    <div className="list-content">
+      {checkResult.passed.length} passed, {checkResult.not_passed.length} not passed, {checkResult.failed.length} failed to run the check job.
+    </div>
+
     <Divider />
 
     <div className="list-content">
-      <H5>Success List</H5>
+      <H5>== Success List ==</H5>
       <div>
-        {checkResult.passed.map((item, index) => <CheckItem jobid={item} index={index} result="passed" />)}
+        {checkResult.passed.map((item, index) => <CheckItem key={index} jobid={item} index={index} result="passed" name={checkResult.job_info[item].target} />)}
       </div>
 
       {checkResult.passed.length === 0 && <div>No content under this status</div>}
@@ -42,30 +46,30 @@ export default function CheckDetailPage() {
 
     <Divider />
     <div className="list-content">
-      <H5>Not Pass</H5>
+      <H5>== Not Pass ==</H5>
       <div>
-        {checkResult.not_passed.map((item, index) => <CheckItem jobid={item} index={index} result="not pass" />)}
+        {checkResult.not_passed.map((item, index) => <CheckItem key={index} jobid={item} index={index} result="not pass" name={checkResult.job_info[item].target} />)}
       </div>
       {checkResult.not_passed.length === 0 && <div>No content under this status</div>}
     </div>
 
     <Divider />
     <div className="list-content">
-      <H5>Check Failed</H5>
+      <H5>== Check Failed ==</H5>
       <div>
-        {checkResult.failed.map((item, index) => <CheckItem jobid={item} index={index} result="failed" />)}
+        {checkResult.failed.map((item, index) => <CheckItem key={index} jobid={item} index={index} result="failed" name={checkResult.job_info[item].target} />)}
       </div>
       {checkResult.failed.length === 0 && <div>No content under this status</div>}
     </div>
   </div>;
 }
 
-const CheckItem = ({ jobid, index, result }) => {
+const CheckItem = ({ jobid, index, result, name }) => {
   return (
     <div key={jobid} className="job-link">
       <span> ({index}).</span>
       <Link to={`${jobid}`}>
-        {jobid}
+        {name}
         {"  "}
       </Link>
       <span className="job-item-success">
@@ -75,3 +79,4 @@ const CheckItem = ({ jobid, index, result }) => {
     </div>
   );
 };
+
