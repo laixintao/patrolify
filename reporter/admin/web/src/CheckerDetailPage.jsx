@@ -1,4 +1,4 @@
-import { Divider, H4, Card, Spinner } from "@blueprintjs/core";
+import { Spinner } from "@blueprintjs/core";
 import axios from "axios";
 import React from "react";
 import { useParams } from "react-router-dom";
@@ -23,21 +23,10 @@ export default function CheckerDetailPage() {
   if (loadingDetail) {
     return <Spinner />;
   }
-  return (
-    <div className="main-body">
-      <CheckerDetail data={detailInfo} name={checkerName} />
-    </div>
-  );
-}
-
-const CheckerDetail = ({ data, name }) => {
-  const latestChecks = data;
+  const latestChecks = detailInfo;
 
   return (
-    <Card className="job-table-list">
-      <H4>{name}</H4>
-      <Divider style={{ margin: 0 }} />
-
+    <>
       <div className="job-history-list">
         {Object.keys(latestChecks)
           .sort()
@@ -54,9 +43,9 @@ const CheckerDetail = ({ data, name }) => {
       <p className="hint">
         (Displayed time is the local time of your browser.)
       </p>
-    </Card>
+    </>
   );
-};
+}
 
 const JobItem = ({ cid, index, checkDetail }) => {
   return (
