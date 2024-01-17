@@ -18,7 +18,7 @@ export default function JobDetailPage() {
       setData(data);
       setLoadingDetail(false);
     });
-  }, []);
+  }, [jobId]);
 
   if (loadingDetail) {
     return <Spinner />;
