@@ -92,3 +92,10 @@ def get_check_report(check_name, check_id):
         report_result = json.load(f)
 
     return report_result
+
+
+def get_result_by_job_id(check_name, check_id, job_id):
+    with open(g.report_dir(check_name, check_id) / f"{job_id}.json") as f:
+        report_result = json.load(f)
+
+    return report_result

@@ -7,6 +7,7 @@ import HomePage from "./HomePage";
 import CheckerDetailPage from "./CheckerDetailPage";
 import CheckerLayout from "./CheckerLayout";
 import CheckDetailPage from "./CheckDetailPage";
+import JobDetailPage from "./JobDetailPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
         path: "checker",
         element: <CheckerLayout />,
         children: [
+          {
+            path: ":checkerName/job/:checkId/:jobId",
+            element: <JobDetailPage />,
+          },
           {
             path: ":checkerName/job/:checkId",
             element: <CheckDetailPage />,
