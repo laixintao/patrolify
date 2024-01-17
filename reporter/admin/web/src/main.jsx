@@ -5,8 +5,8 @@ import App from "./App";
 import { FocusStyleManager } from "@blueprintjs/core";
 import HomePage from "./HomePage";
 import CheckerDetailPage from "./CheckerDetailPage";
-import JobDetailPage from "./JobDetailPage";
 import CheckerLayout from "./CheckerLayout";
+import CheckDetailPage from "./CheckDetailPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -21,8 +21,8 @@ const router = createBrowserRouter([
         element: <CheckerLayout />,
         children: [
           {
-            path: ":checkerName/job/:jobId",
-            element: <JobDetailPage />,
+            path: ":checkerName/job/:checkId",
+            element: <CheckDetailPage />,
           },
           {
             path: ":checkerName",

@@ -49,8 +49,13 @@ def checker_detail(name):
     result = {}
     for check_id in latest_check_ids:
         result[check_id] = get_check_report(name, check_id)
-    
+
     return jsonify(result)
+
+
+@admin_api_blueprint.route("/checker/<name>/<int:check_id>")
+def result_by_check_id(name, check_id):
+    return jsonify(get_check_report(name, str(check_id)))
 
 
 def get_latest_report_dir(trigger_name):

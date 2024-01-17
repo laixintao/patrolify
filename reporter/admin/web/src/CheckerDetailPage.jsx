@@ -1,9 +1,8 @@
 import { Spinner } from "@blueprintjs/core";
 import axios from "axios";
-import React from "react";
-import { useParams } from "react-router-dom";
 import moment from "moment";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useParams } from "react-router-dom";
 import "./CheckerDetailPage.css";
 
 export default function CheckerDetailPage() {
@@ -27,12 +26,12 @@ export default function CheckerDetailPage() {
 
   return (
     <>
-      <div className="job-history-list">
+      <div className="list-content">
         {Object.keys(latestChecks)
           .sort()
           .reverse()
           .map((cid, index) => (
-            <JobItem
+            <CheckItem
               cid={cid}
               index={index}
               key={cid}
@@ -47,7 +46,7 @@ export default function CheckerDetailPage() {
   );
 }
 
-const JobItem = ({ cid, index, checkDetail }) => {
+const CheckItem = ({ cid, index, checkDetail }) => {
   return (
     <div key={cid} className="job-link">
       <span> ({index}).</span>
