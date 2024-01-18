@@ -3,11 +3,11 @@ import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import { FocusStyleManager } from "@blueprintjs/core";
-import HomePage from "./HomePage";
+import HomePage from "./homepage/HomePage";
 import CheckerDetailPage from "./CheckerDetailPage";
 import CheckerLayout from "./CheckerLayout";
 import CheckDetailPage from "./CheckDetailPage";
-import JobDetailPage from "./JobDetailPage";
+import JobDetailPage from "./jobdetailpage/JobDetailPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

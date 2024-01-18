@@ -8,6 +8,8 @@ from reporter.reports import (
     get_latest_check_ids,
     get_result_by_job_id,
 )
+from rq import Queue, Worker
+
 
 logger = logging.getLogger(__name__)
 admin_api_blueprint = Blueprint("admin_api", __name__, url_prefix="/api/v1")
@@ -65,6 +67,43 @@ def result_by_check_id(name, check_id):
 @admin_api_blueprint.route("/checker/<name>/<int:check_id>/<job_id>")
 def result_by_job_id(name, check_id, job_id):
     return jsonify(get_result_by_job_id(name, str(check_id), job_id))
+
+
+@admin_api_blueprint.route("/monitor-info")
+def monitor_info():
+    workers = Worker.all(connection=g.redis)
+
+    workers_data = [
+        {
+            "hostname": worker.hostname,
+            "pid": worker.pid,
+            "queues": worker.queue_names(),
+            "state": worker.state,
+            "last_heartbeat": worker.last_heartbeat,
+            "birth_date": worker.birth_date,
+            "successful_job_count": worker.successful_job_count,
+            "failed_job_count": worker.failed_job_count,
+            "total_working_time": worker.total_working_time,
+        }
+        for worker in workers
+    ]
+
+    return jsonify({
+        "total_worker_count": len(workers),
+        "workers": workers_data,
+        "checker_queue": {
+            "count": g.checker_queue.count,
+            "started_job": g.checker_queue.started_job_registry.count,
+            "finished_job": g.checker_queue.finished_job_registry.count,
+            "failed_job":  g.checker_queue.failed_job_registry.count,
+        },
+        "reporter_queue": {
+            "count": g.reporter_queue.count,
+            "started_job": g.reporter_queue.started_job_registry.count,
+            "finished_job": g.reporter_queue.finished_job_registry.count,
+            "failed_job":  g.reporter_queue.failed_job_registry.count,
+        },
+    })
 
 
 def get_latest_report_dir(trigger_name):

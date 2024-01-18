@@ -7,6 +7,7 @@ import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
 import "./HomePage.css";
+import MonitorStatus from "./MonitorStatus";
 
 export default function HomePage() {
   const [checkers, setCheckers] = React.useState([]);
@@ -25,7 +26,12 @@ export default function HomePage() {
   }
   return (
     <div className="main-body">
-      <JobTableList checkers={checkers} />
+      <div className="body-detail">
+        <JobTableList checkers={checkers} />
+      </div>
+      <div className="monitor-status">
+        <MonitorStatus />
+      </div>
     </div>
   );
 }
