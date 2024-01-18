@@ -1,0 +1,32 @@
+
+.main-body {
+ display: flex;
+ gap: 20px;
+}
+
+.body-detail{
+  width: 70%;
+}
+
+
+
+.monitor-status {
+  width: 25%;
+}
+
+.job-table-list {
+  width: 100%;
+}
+.checker-row {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.checker-row .check-active {
+  color: green;
+  margin-right: 1rem;
+}
+
+.checker-row .updated-time {
+  color: grey;
+}

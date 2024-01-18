@@ -1,0 +1,13 @@
+.worker-block {
+  background-color: #dbffec;
+  padding: 8px;
+  border-radius: 3px;
+}
+
+.worker-card {
+  margin-bottom: 20px;
+}
+
+.queue-card {
+  margin-bottom: 20px;
+}

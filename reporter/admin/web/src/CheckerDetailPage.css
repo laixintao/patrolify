@@ -1,0 +1,24 @@
+.list-content {
+  font-family: Monaco;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 24px;
+}
+
+.job-link {
+  margin: 4px;
+}
+
+p.hint {
+  color: grey;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.job-item-success {
+  color: green;
+}
+
+.job-item-fail {
+  color: red;
+}

@@ -1,19 +1,16 @@
-import os
 import logging
-from pathlib import Path
 
 
-from flask import Flask, jsonify, render_template, request
-from reporter.version import VERSION
-from prometheus_client import Gauge, Counter, Histogram, Info
+from flask import Flask
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from prometheus_client import make_wsgi_app
+from .admin_api import admin_api_blueprint
 
 
 logger = logging.getLogger(__name__)
 
 
-def create_app(prefix):
+def create_app():
     app = Flask(__name__)
 
     # Add prometheus wsgi middleware to route /metrics requests
@@ -22,12 +19,8 @@ def create_app(prefix):
         app.wsgi_app,
         {
             "/metrics": prometheus_wsgi_app,
-            f"{prefix}/metrics": prometheus_wsgi_app,
         },
     )
-
-    @app.route(f"{prefix}/")
-    def home():
-        return "hello, admin"
+    app.register_blueprint(admin_api_blueprint)
 
     return app
