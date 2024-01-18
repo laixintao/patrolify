@@ -1,4 +1,4 @@
-import { Card, H6, Icon, Spinner } from "@blueprintjs/core";
+import { H5, Card, H6, Icon, Spinner } from "@blueprintjs/core";
 import moment from "moment";
 import React from "react";
 import "./MonitorStatus.css";
@@ -18,12 +18,39 @@ export default function MonitorStatus() {
     return <Spinner />
   }
   return <div>
-    <Card>
-      <p>Total running workers: {data.total_worker_count}</p>
+    <Card className="worker-card">
+      <H5>Total running workers: {data.total_worker_count}</H5>
 
       {data.workers.map((worker, index) => <Worker worker={worker} key={index} />)}
     </Card>
+
+    <Card className="queue-card">
+      <H5>Checker Queue</H5>
+      <QueueStatus queue={data.checker_queue} />
+    </Card>
+
+    <Card className="queue-card">
+      <H5>Reporter Queue</H5>
+      <QueueStatus queue={data.reporter_queue} />
+    </Card>
+    <Card >
+      <H5>Redis Info</H5>
+      <p>Used memory: {data.redis.used_memory_human}</p>
+    </Card>
   </div>
+}
+
+const QueueStatus = ({ queue }) => {
+  return <div>
+
+    <p>
+      {queue.count} jobs pending to be executed, {queue.started_job} in executing.
+    </p>
+
+    <p>
+      Finished {queue.finished_job}, failed {queue.failed_job}.
+    </p>
+  </div>;
 }
 
 const Worker = ({ worker }) => {

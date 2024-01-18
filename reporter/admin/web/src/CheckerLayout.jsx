@@ -7,9 +7,8 @@ export default function CheckerLayout() {
   let { checkerName } = useParams();
 
   return (
-    <div className="main-body">
+    <div className="body-detail">
       <Link to={`/checker/${checkerName}`}>
-
         <H4>{checkerName}</H4>
       </Link>
       <Card className="job-table-list">

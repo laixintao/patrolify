@@ -88,6 +88,8 @@ def monitor_info():
         for worker in workers
     ]
 
+    info = g.redis.info()
+
     return jsonify({
         "total_worker_count": len(workers),
         "workers": workers_data,
@@ -95,14 +97,15 @@ def monitor_info():
             "count": g.checker_queue.count,
             "started_job": g.checker_queue.started_job_registry.count,
             "finished_job": g.checker_queue.finished_job_registry.count,
-            "failed_job":  g.checker_queue.failed_job_registry.count,
+            "failed_job": g.checker_queue.failed_job_registry.count,
         },
         "reporter_queue": {
             "count": g.reporter_queue.count,
             "started_job": g.reporter_queue.started_job_registry.count,
             "finished_job": g.reporter_queue.finished_job_registry.count,
-            "failed_job":  g.reporter_queue.failed_job_registry.count,
+            "failed_job": g.reporter_queue.failed_job_registry.count,
         },
+        "redis": {"used_memory_human": info["used_memory_human"]},
     })
 
 

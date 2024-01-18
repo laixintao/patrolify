@@ -7,7 +7,9 @@ function App() {
     <div>
       <AppNavbar />
 
-      <Outlet />
+      <div className="app-body">
+        <Outlet />
+      </div>
     </div>
   );
 }
