@@ -1,9 +1,9 @@
-import { Divider, H5, Icon, Spinner, Tab, Tabs } from "@blueprintjs/core";
+import { Divider, FormGroup, H5, Icon, InputGroup, Spinner, Tab, Tabs } from "@blueprintjs/core";
+import axios from "axios";
 import moment from "moment";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
 import { Tree } from "react-arborist";
+import { Link, useParams } from "react-router-dom";
 
 
 export default function CheckDetailPage() {
@@ -11,6 +11,7 @@ export default function CheckDetailPage() {
 
   const [checkResult, setCheckResult] = React.useState({});
   const [loadingDetail, setLoadingDetail] = React.useState(true);
+
 
   React.useEffect(() => {
     axios.get(`/api/v1/checker/${checkerName}/${checkId}`).then((resp) => {
@@ -30,13 +31,18 @@ export default function CheckDetailPage() {
       {moment.unix(checkId).format("YYYY-MM-DD HH:mm z")}
     </H5>
 
+
     <div className="list-content">
-      {checkResult.passed.length} passed, {checkResult.not_passed.length} not passed, {checkResult.failed.length} failed to run the check job.
+      {checkResult.passed.length} passed, {checkResult.not_passed.length} not passed, {checkResult.failed.length} failed to run the check job (got unhandled exceptions).
     </div>
 
+
     <Tabs>
-      <Tab id="list-view" title="List by Result" icon="properties" panel={<JobList checkResult={checkResult} />} />
-      <Tab id="tree-view" title="Tree View" icon="diagram-tree" panel={<JobTree jobData={checkResult.job_info} head={checkResult.start_job_id} />} />
+      <Tab id="tree-view" title="Tree View" icon="diagram-tree" panel={<JobTree jobData={checkResult.job_info} head={checkResult.start_job_id}
+      />} />
+      <Tab id="list-view" title="List by Result" icon="properties" panel={<JobList checkResult={checkResult}
+
+      />} />
     </Tabs>
   </div >;
 }
@@ -58,9 +64,10 @@ const CheckItem = ({ jobid, index, result, name, showIndex = true }) => {
 };
 
 
-const JobTree = ({ jobData, head }) => {
-  console.log(jobData);
+const JobTree = ({ jobData, head,
+}) => {
 
+  const [filterTargetName, setFilterTargetName] = React.useState("");
   const getTree = (data, key) => {
     const node = data[key];
 
@@ -79,7 +86,6 @@ const JobTree = ({ jobData, head }) => {
     };
   }
   const treeHead = getTree(jobData, head);
-  console.log("tree head: ", treeHead);
 
   const Node = ({ node, style, dragHandle }) => {
     return (
@@ -93,10 +99,24 @@ const JobTree = ({ jobData, head }) => {
       </div >
     );
   }
+
   return (
     <>
       <div >
-        <Tree initialData={[treeHead]} disableDrag={true} disableEdit={true} disableDrop={true} width="100%">
+        <div className="filters">
+          <FormGroup
+            label="Filter by target name"
+            labelFor="search-target-name"
+          >
+            <InputGroup id="search-target-name" placeholder="target name, support result like passed, not passed, failed." value={filterTargetName} onChange={e => setFilterTargetName(e.target.value)} />
+          </FormGroup>
+        </div>
+        <Tree initialData={[treeHead]} disableDrag={true} disableEdit={true} disableDrop={true} width="100%"
+          searchTerm={filterTargetName}
+          searchMatch={
+            (node, term) => `${node.data.name} ${node.data.result}`.toLowerCase().includes(term.toLowerCase())
+          }
+        >
           {Node}
         </Tree>
       </div>
