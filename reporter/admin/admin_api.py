@@ -8,7 +8,7 @@ from reporter.reports import (
     get_latest_check_ids,
     get_result_by_job_id,
 )
-from rq import Queue, Worker
+from rq import Worker
 
 
 logger = logging.getLogger(__name__)
