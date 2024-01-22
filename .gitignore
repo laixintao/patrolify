@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 results
 reporter/admin/web/.vite/
+reporter/admin/frontend_dist/
