@@ -14,4 +14,4 @@ run-admin-web:
 	cd reporter/admin/web && PORT=3004 yarn start
 
 build:
-	cd reporter/admin/web/; yarn build --outDir ../frontend_dist/
+	cd reporter/admin/web/; yarn build --base /static --emptyOutDir --outDir ../frontend_dist/
