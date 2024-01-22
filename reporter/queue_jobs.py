@@ -1,4 +1,3 @@
-import json
 import logging
 import time
 import types
@@ -7,7 +6,7 @@ from reporter.consts import GLOBAL_TTL_SECONDS
 from reporter.target import TimeTriggerTarget
 
 from .globals import g, threadlocal
-from .reports import generate_report
+from .reports import generate_report, store_check_result
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +42,11 @@ def trigger_target(funcname):
 
 def process_result(result, target):
     if isinstance(result, tuple):
-        store_check_result(result, target)
+        g.reporter_queue.enqueue(
+            store_check_result,
+            result,
+            target
+        )
 
     if isinstance(result, types.GeneratorType):
         try:
@@ -52,7 +55,11 @@ def process_result(result, target):
                 queue_target(t)
         except StopIteration as e:
             check_result = e.value
-            store_check_result(check_result, target)
+            g.reporter_queue.enqueue(
+                store_check_result,
+                check_result,
+                target
+            )
 
     incr_task_count_and_check_finsihed(target)
 
@@ -90,35 +97,3 @@ def restore_thread_local(target):
     threadlocal.check_id = target.check_id
     threadlocal.check_name = target.check_name
     threadlocal.current_target = target
-
-
-def store_check_result(result, target):
-    data = {
-        "job_id": target.job_id,
-        "target": str(target),
-        "parent_target_id": target.parent_target,
-        "run_success": None,
-        "check_pass": None,
-        "reason": None,
-    }
-
-    if result is None:
-        pass
-    elif isinstance(result, tuple):
-        boolresult, reason = result
-
-        data.update(
-            {
-                "run_success": True,
-                "check_pass": boolresult,
-                "reason": reason,
-            }
-        )
-
-    check_name = target.check_name
-    check_id = target.check_id
-    result_dir = g.result_dir(check_name, check_id)
-    result_dir.mkdir(parents=True, exist_ok=True)
-    with open(str(result_dir / target.job_id) + ".json", "w") as f:
-        json.dump(data, f)
-        logger.info("Job result has been saved to %s", f)
