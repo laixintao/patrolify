@@ -1,12 +1,15 @@
-import shutil
-
-import logging
+import dataclasses
 import glob
+import json
+import json
+import logging
+import shutil
 from typing import Dict, List
-from .globals import g
-from .consts import RESULT_FILE_NAME
-import dataclasses, json
+
 from redis.lock import Lock
+
+from .consts import RESULT_FILE_NAME
+from .globals import g
 
 logger = logging.getLogger(__name__)
 MAX_LATEST_CHECK_ID_RECORDING = 100
@@ -119,3 +122,36 @@ def get_result_by_job_id(check_name, check_id, job_id):
         report_result = json.load(f)
 
     return report_result
+
+
+
+def store_check_result(result, target):
+    data = {
+        "job_id": target.job_id,
+        "target": str(target),
+        "parent_target_id": target.parent_target,
+        "run_success": None,
+        "check_pass": None,
+        "reason": None,
+    }
+
+    if result is None:
+        pass
+    elif isinstance(result, tuple):
+        boolresult, reason = result
+
+        data.update(
+            {
+                "run_success": True,
+                "check_pass": boolresult,
+                "reason": reason,
+            }
+        )
+
+    check_name = target.check_name
+    check_id = target.check_id
+    result_dir = g.result_dir(check_name, check_id)
+    result_dir.mkdir(parents=True, exist_ok=True)
+    with open(str(result_dir / target.job_id) + ".json", "w") as f:
+        json.dump(data, f)
+        logger.info("Job result has been saved to %s", f)
