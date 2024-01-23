@@ -1,9 +1,9 @@
 import json
 import logging
 from flask import Blueprint, jsonify
-from reporter.globals import g
-from reporter.consts import RESULT_FILE_NAME
-from reporter.reports import (
+from patrolify.globals import g
+from patrolify.consts import RESULT_FILE_NAME
+from patrolify.reports import (
     get_check_report,
     get_latest_check_ids,
     get_result_by_job_id,
@@ -99,11 +99,11 @@ def monitor_info():
             "finished_job": g.checker_queue.finished_job_registry.count,
             "failed_job": g.checker_queue.failed_job_registry.count,
         },
-        "reporter_queue": {
-            "count": g.reporter_queue.count,
-            "started_job": g.reporter_queue.started_job_registry.count,
-            "finished_job": g.reporter_queue.finished_job_registry.count,
-            "failed_job": g.reporter_queue.failed_job_registry.count,
+        "patrolify_queue": {
+            "count": g.patrolify_queue.count,
+            "started_job": g.patrolify_queue.started_job_registry.count,
+            "finished_job": g.patrolify_queue.finished_job_registry.count,
+            "failed_job": g.patrolify_queue.failed_job_registry.count,
         },
         "redis": {"used_memory_human": info["used_memory_human"]},
     })

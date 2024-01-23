@@ -1,9 +1,9 @@
 import logging
 import time
 import types
-from reporter.consts import GLOBAL_TTL_SECONDS
+from patrolify.consts import GLOBAL_TTL_SECONDS
 
-from reporter.target import TimeTriggerTarget
+from patrolify.target import TimeTriggerTarget
 
 from .globals import g, threadlocal
 from .reports import generate_report, store_check_result
@@ -42,7 +42,7 @@ def trigger_target(funcname):
 
 def process_result(result, target):
     if isinstance(result, tuple):
-        g.reporter_queue.enqueue(
+        g.patrolify_queue.enqueue(
             store_check_result,
             result,
             target
@@ -55,7 +55,7 @@ def process_result(result, target):
                 queue_target(t)
         except StopIteration as e:
             check_result = e.value
-            g.reporter_queue.enqueue(
+            g.patrolify_queue.enqueue(
                 store_check_result,
                 check_result,
                 target
@@ -78,7 +78,7 @@ def incr_task_count_and_check_finsihed(target):
             target.finished_count_key,
             finished_count,
         )
-        g.reporter_queue.enqueue(generate_report, target.check_name, target.check_id)
+        g.patrolify_queue.enqueue(generate_report, target.check_name, target.check_id)
 
 
 def get_checker(target):

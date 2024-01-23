@@ -23,7 +23,7 @@ export default function AppNavbar() {
         </Link>
       </NavbarGroup>
       <NavbarGroup align="right">
-        <Link to="https://github.com/laixintao/reporter">
+        <Link to="https://github.com/laixintao/patrolify">
           <Button className={Classes.MINIMAL} icon="git-repo" text="Source Code" />
         </Link>
       </NavbarGroup>

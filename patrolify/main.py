@@ -35,7 +35,7 @@ def setup_log(enabled, level, loglocation):
         )
     else:
         logging.disable(logging.CRITICAL)
-    logger.info("------ reporter ------")
+    logger.info("------ patrolify ------")
 
 
 def load_checkers(path):
@@ -73,7 +73,7 @@ def main(verbose, log_to, redis_url):
     setup_log(log_to is not None, log_level, log_to)
     g.redis = Redis.from_url(redis_url)
     g.checker_queue = Queue("checker", connection=g.redis)
-    g.reporter_queue = Queue("reporter", connection=g.redis)
+    g.patrolify_queue = Queue("patrolify", connection=g.redis)
 
 
 @main.command()
@@ -96,15 +96,15 @@ def main(verbose, log_to, redis_url):
     "-q",
     multiple=True,
     help=(
-        "work for which queue? queue type: 1) checker 2) reporter, for generating"
+        "work for which queue? queue type: 1) checker 2) patrolify, for generating"
         " reports. If you use the file system as the report store, you should only run"
-        " one worker for the reporter queue."
+        " one worker for the patrolify queue."
     ),
 )
 def worker(python_checker, result_path, queue):
     queue_map = {
         "checker": g.checker_queue,
-        "reporter": g.reporter_queue,
+        "patrolify": g.patrolify_queue,
     }
 
     _queue = []

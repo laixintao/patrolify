@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 
-from reporter.exceptions import UsageError
+from patrolify.exceptions import UsageError
 
 from .globals import Role, g
 from .queue_jobs import trigger_target

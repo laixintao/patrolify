@@ -1,5 +1,5 @@
 class ReporterException(Exception):
-    """error in reporter system"""
+    """error in patrolify system"""
 
 
 class UsageError(ReporterException):
