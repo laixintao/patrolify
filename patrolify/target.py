@@ -22,15 +22,15 @@ class Target:
 
     @property
     def scheduled_count_key(self):
-        return f"reporter:{self.check_name}:{self.check_id}:scheduled"
+        return f"patrolify:{self.check_name}:{self.check_id}:scheduled"
 
     @property
     def finished_count_key(self):
-        return f"reporter:{self.check_name}:{self.check_id}:finished"
+        return f"patrolify:{self.check_name}:{self.check_id}:finished"
 
     @property
     def started_time_key(self):
-        return f"reporter:{self.check_name}:{self.check_id}:started_timestamp"
+        return f"patrolify:{self.check_name}:{self.check_id}:started_timestamp"
 
 
 class TimeTriggerTarget(Target):

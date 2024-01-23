@@ -159,5 +159,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 results
-reporter/admin/web/.vite/
-reporter/admin/frontend_dist/
+patrolify/admin/web/.vite/
+patrolify/admin/frontend_dist/

@@ -1,8 +1,8 @@
 import OpenSSL
 from datetime import datetime
 import ssl
-from reporter.decorators import check, trigger
-from reporter.target import Target
+from patrolify.decorators import check, trigger
+from patrolify.target import Target
 import logging
 
 logger = logging.getLogger(__name__)

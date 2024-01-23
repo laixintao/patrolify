@@ -87,7 +87,7 @@ def update_latest_check(check_name, check_id):
     """
     write the check_id into the latest check file
     """
-    lock = Lock(g.redis, "reporter:lock:update_latest_check_file")
+    lock = Lock(g.redis, "patrolify:lock:update_latest_check_file")
     with lock:
         old_check_ids = get_latest_check_ids(check_name)
 

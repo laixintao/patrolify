@@ -1,4 +1,4 @@
-from reporter.decorators import trigger
+from patrolify.decorators import trigger
 
 
 @trigger(interval_seconds=2 * 60)

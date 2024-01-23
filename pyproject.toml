@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "reporter"
+name = "patrolify"
 version = "0.1.0"
 description = ""
 authors = ["laixintao <laixintaoo@gmail.com>"]
@@ -20,4 +20,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-reporter = 'reporter.main:main'
+patrolify = 'patrolify.main:main'
