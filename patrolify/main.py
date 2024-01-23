@@ -48,6 +48,10 @@ def load_checkers(path):
                 continue
             logger.info("import python file: %s", abs_path)
 
+            # remove the ./ prefix
+            if abs_path.startswith("./"):
+                abs_path = abs_path[2:]
+
             module_name = abs_path[:-3].replace("/", ".")
             importlib.import_module(module_name)
     logger.info("Loading checkers done: %s", g.target_checkers)
