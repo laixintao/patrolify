@@ -1,3 +1,4 @@
+import sys
 import importlib
 import waitress
 import importlib.util
@@ -40,6 +41,7 @@ def setup_log(enabled, level, loglocation):
 
 
 def load_checkers(path):
+    sys.path.append(str(pathlib.Path(path).parent))
     for root, _, files in os.walk(path):
         for file in files:
             abs_path = os.path.join(root, file)
@@ -53,6 +55,7 @@ def load_checkers(path):
                 abs_path = abs_path[2:]
 
             module_name = abs_path[:-3].replace("/", ".")
+            logger.info("loading module: %s", module_name)
             importlib.import_module(module_name)
     logger.info("Loading checkers done: %s", g.target_checkers)
 
