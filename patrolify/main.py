@@ -14,6 +14,7 @@ from rq_scheduler import Scheduler
 from .globals import Role, g
 from .reports import generate_report
 from .admin import create_app
+from patrolify import __version__
 
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,13 @@ def load_checkers(path):
     logger.info("Loading checkers done: %s", g.target_checkers)
 
 
+def print_version(ctx, _, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(__version__)
+    ctx.exit()
+
+
 @click.group()
 @click.option(
     "-v",
@@ -68,6 +76,13 @@ def load_checkers(path):
     help="Printing logs to a file, for debugging, default is no logs.",
 )
 @click.option("-r", "--redis-url", help="Redis url as the job queue")
+@click.option(
+    "--version",
+    is_flag=True,
+    callback=print_version,
+    expose_value=False,
+    is_eager=True,
+)
 def main(verbose, log_to, redis_url):
     log_level = LOG_LEVEL[verbose]
     setup_log(log_to is not None, log_level, log_to)
