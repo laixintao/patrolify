@@ -1,3 +1,5 @@
+.PHONY: build-frontend release
+
 run-planner:
 	poetry run patrolify --redis-url redis://127.0.0.1:6379 --log-to=patrolify-planner.log -vvv planner  --python-checker contrib
 
@@ -13,5 +15,9 @@ run-admin:
 run-admin-web:
 	cd patrolify/admin/web && PORT=3004 yarn start
 
-build:
-	cd patrolify/admin/web/; yarn build --base /static --emptyOutDir --outDir ../frontend_dist/
+build-frontend:
+	cd patrolify/admin/web/; yarn; yarn build --base /static --emptyOutDir --outDir ../frontend_dist/
+	mv patrolify/admin/web/node_modules /tmp/a_node_modules
+
+release: build-frontend
+	poetry build

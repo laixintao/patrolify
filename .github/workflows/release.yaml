@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release-pypi:
+    name: release-pypi
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install Dependencies
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install -U pip
+          pip install poetry
+          poetry install
+          python -c "import sys; print(sys.version)"
+          pip list
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: setup yarn
+        run: npm install -g yarn
+
+      - name: install frontend dependencies
+        run: |
+          cd patrolify/admin/web/
+          yarn
+          yarn build --base /static --emptyOutDir --outDir ../frontend_dist/
+          rm -rf node_modules
+
+      - name: Poetry Build
+        run: |
+          . venv/bin/activate
+          poetry build
+
+      - name: Test Build
+        run: |
+          python3 -m venv fresh_env
+          . fresh_env/bin/activate
+          pip install dist/*.whl
+
+          patrolify --version
+
+      - name: Upload to Pypi
+        env:
+          PASSWORD: ${{ secrets.PATROLIFY_PYPI_TOKEN }}
+        run: |
+          . venv/bin/activate
+          poetry publish --username __token__ --password ${PASSWORD}
