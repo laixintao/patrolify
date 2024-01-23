@@ -99,11 +99,11 @@ def monitor_info():
             "finished_job": g.checker_queue.finished_job_registry.count,
             "failed_job": g.checker_queue.failed_job_registry.count,
         },
-        "patrolify_queue": {
-            "count": g.patrolify_queue.count,
-            "started_job": g.patrolify_queue.started_job_registry.count,
-            "finished_job": g.patrolify_queue.finished_job_registry.count,
-            "failed_job": g.patrolify_queue.failed_job_registry.count,
+        "reporter_queue": {
+            "count": g.reporter_queue.count,
+            "started_job": g.reporter_queue.started_job_registry.count,
+            "finished_job": g.reporter_queue.finished_job_registry.count,
+            "failed_job": g.reporter_queue.failed_job_registry.count,
         },
         "redis": {"used_memory_human": info["used_memory_human"]},
     })

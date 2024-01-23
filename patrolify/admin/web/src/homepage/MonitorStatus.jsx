@@ -31,7 +31,7 @@ export default function MonitorStatus() {
 
     <Card className="queue-card">
       <H5>Reporter Queue</H5>
-      <QueueStatus queue={data.patrolify_queue} />
+      <QueueStatus queue={data.reporter_queue} />
     </Card>
     <Card >
       <H5>Redis Info</H5>

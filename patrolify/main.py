@@ -95,7 +95,7 @@ def main(verbose, log_to, redis_url):
     setup_log(log_to is not None, log_level, log_to)
     g.redis = Redis.from_url(redis_url)
     g.checker_queue = Queue("checker", connection=g.redis)
-    g.patrolify_queue = Queue("patrolify", connection=g.redis)
+    g.reporter_queue = Queue("patrolify", connection=g.redis)
 
 
 @main.command()
@@ -126,7 +126,7 @@ def main(verbose, log_to, redis_url):
 def worker(python_checker, result_path, queue):
     queue_map = {
         "checker": g.checker_queue,
-        "patrolify": g.patrolify_queue,
+        "patrolify": g.reporter_queue,
     }
 
     _queue = []
