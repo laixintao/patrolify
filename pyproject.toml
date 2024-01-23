@@ -4,6 +4,11 @@ version = "0.1.0"
 description = ""
 authors = ["laixintao <laixintaoo@gmail.com>"]
 readme = "README.md"
+include = [
+    "patrolify/admin/frontend_dist/*" ,
+    "patrolify/admin/frontend_dist/*/*" ,
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
