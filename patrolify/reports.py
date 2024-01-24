@@ -73,6 +73,8 @@ def generate_report(check_name, check_id):
             main_result.all_passed = False
             main_result.not_passed.append(result["job_id"])
 
+    check_directory.mkdir(parents=True, exist_ok=True)
+
     main_result_location = check_directory / RESULT_FILE_NAME
     with open(main_result_location, "w") as f:
         json.dump(main_result, f, cls=EnhancedJSONEncoder)
@@ -125,11 +127,11 @@ def get_result_by_job_id(check_name, check_id, job_id):
 
 
 
-def store_check_result(result, target):
+def store_check_result(result, target, check_name, check_id, job_id, parent_id):
     data = {
-        "job_id": target.job_id,
-        "target": str(target),
-        "parent_target_id": target.parent_target,
+        "job_id": job_id,
+        "target": target,
+        "parent_target_id": parent_id,
         "run_success": None,
         "check_pass": None,
         "reason": None,
@@ -148,10 +150,8 @@ def store_check_result(result, target):
             }
         )
 
-    check_name = target.check_name
-    check_id = target.check_id
     result_dir = g.result_dir(check_name, check_id)
     result_dir.mkdir(parents=True, exist_ok=True)
-    with open(str(result_dir / target.job_id) + ".json", "w") as f:
+    with open(str(result_dir / job_id) + ".json", "w") as f:
         json.dump(data, f)
         logger.info("Job result has been saved to %s", f)

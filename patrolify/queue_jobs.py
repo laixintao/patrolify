@@ -45,7 +45,11 @@ def process_result(result, target):
         g.reporter_queue.enqueue(
             store_check_result,
             result,
-            target
+            str(target),
+            target.check_name,
+            target.check_id,
+            target.job_id,
+            target.parent_target,
         )
 
     if isinstance(result, types.GeneratorType):
@@ -58,7 +62,11 @@ def process_result(result, target):
             g.reporter_queue.enqueue(
                 store_check_result,
                 check_result,
-                target
+                str(target),
+                target.check_name,
+                target.check_id,
+                target.job_id,
+                target.parent_target,
             )
 
     incr_task_count_and_check_finsihed(target)
