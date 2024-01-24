@@ -51,8 +51,7 @@ def load_checkers(path):
             logger.info("import python file: %s", abs_path)
 
             # remove the ./ prefix
-            if abs_path.startswith("./"):
-                abs_path = abs_path[2:]
+            abs_path = abs_path.lstrip("./")
 
             module_name = abs_path[:-3].replace("/", ".")
             logger.info("loading module: %s", module_name)
