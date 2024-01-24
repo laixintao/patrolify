@@ -46,7 +46,7 @@ def trigger(interval_seconds=None, cron_string=None):
                 args=[funcname],
             )
         else:
-            scheduler.schedule(
+            scheduler.cron(
                 cron_string,
                 func=trigger_target,
                 args=[funcname],
