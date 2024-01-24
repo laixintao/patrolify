@@ -125,7 +125,7 @@ def main(verbose, log_to, redis_url):
 def worker(python_checker, result_path, queue):
     queue_map = {
         "checker": g.checker_queue,
-        "patrolify": g.reporter_queue,
+        "reporter": g.reporter_queue,
     }
 
     _queue = []
