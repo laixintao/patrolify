@@ -94,7 +94,7 @@ def main(verbose, log_to, redis_url):
     setup_log(log_to is not None, log_level, log_to)
     g.redis = Redis.from_url(redis_url)
     g.checker_queue = Queue("checker", connection=g.redis)
-    g.reporter_queue = Queue("patrolify", connection=g.redis)
+    g.reporter_queue = Queue("reporter", connection=g.redis)
 
 
 @main.command()
