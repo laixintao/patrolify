@@ -49,7 +49,10 @@ function JobTableList({ checkers }) {
 
 const Checker = ({ checker }) => {
   const { latest_report_timestamp, name } = checker;
-  const last_check = moment.unix(Number(latest_report_timestamp));
+  let last_check = "never";
+  if (latest_report_timestamp !== null) {
+    last_check = moment.unix(Number(latest_report_timestamp)).from(moment());
+  }
   return (
     <>
       <Divider style={{ margin: 0 }} />
@@ -60,7 +63,7 @@ const Checker = ({ checker }) => {
         <p>
           <span className="check-active">⬤ active</span>
           <span className="updated-time">
-            last checked {last_check.from(moment())}
+            last checked {last_check}
           </span>
         </p>
       </div>
