@@ -1,9 +1,12 @@
-import OpenSSL
 from datetime import datetime
+import logging
 import ssl
+
+import OpenSSL
+
 from patrolify.decorators import check, trigger
 from patrolify.target import Target
-import logging
+from patrolify.utils import local_test_setup
 
 logger = logging.getLogger(__name__)
 
@@ -52,3 +55,8 @@ def generate_jobs(time_target):
         yield SiteTarget(domain=domain)
 
     return True, "The job has been started"
+
+
+if __name__ == "__main__":
+    local_test_setup()
+    print(check_site(SiteTarget("example.com")))

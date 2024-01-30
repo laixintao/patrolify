@@ -59,6 +59,11 @@ def checker_detail(name):
     return jsonify(result)
 
 
+@admin_api_blueprint.route("/checker/<name>/latest-result")
+def checker_latest_result(name):
+    return jsonify({})
+
+
 @admin_api_blueprint.route("/checker/<name>/<int:check_id>")
 def result_by_check_id(name, check_id):
     return jsonify(get_check_report(name, str(check_id)))
