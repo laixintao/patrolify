@@ -4,6 +4,7 @@ import moment from "moment";
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import "./CheckerDetailPage.css";
+import { JobStatus } from "./JobAllStatusSpan";
 
 export default function CheckerDetailPage() {
   let { checkerName } = useParams();
@@ -53,10 +54,7 @@ const CheckItem = ({ cid, index, checkDetail }) => {
       <Link to={`job/${cid}`}>
         {moment.unix(cid).format("YYYY-MM-DD HH:mm z")}
       </Link>
-      <span className="job-item-success">
-        {checkDetail.all_passed && "success"}
-      </span>
-      <span className="job-item-fail">{!checkDetail.all_passed && "fail"}</span>
+      <JobStatus allPassed={checkDetail.all_passed} />
       <span>{index == 0 && "  (latest)"}</span>
     </div>
   );
