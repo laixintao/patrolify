@@ -59,7 +59,7 @@ Reporter was written in pure Python, requirements:
 Installation(The name `patrolify` was taken on Pypi):
 
 ```shell
-pip install patrolify-platform
+pip install patrolify
 ```
 
 Then you need to run 4 components after installation:
