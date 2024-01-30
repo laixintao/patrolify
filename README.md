@@ -34,6 +34,21 @@ A check function can:
 - or return True/False to indicate the check was passed or not, plus a string
   indicate the extra information
 
+### Test Your Checker
+
+In local environment, you can test your checker from `__main__`. But you need
+to fire `local_test_setup()` first.
+
+For example, you can write this in your `checker.py`:
+
+```python
+if __name__ == '__main__':
+    from patrolify.utils import local_test_setup
+    local_test_setup()
+
+    print(check_ip(IPTarget("127.0.0.1")))
+```
+
 ### How to deploy?
 
 Reporter was written in pure Python, requirements:
