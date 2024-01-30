@@ -8,6 +8,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./HomePage.css";
 import MonitorStatus from "./MonitorStatus";
+import { JobStatus } from "../JobAllStatusSpan";
 
 export default function HomePage() {
   const [checkers, setCheckers] = React.useState([]);
@@ -53,6 +54,17 @@ const Checker = ({ checker }) => {
   if (latest_report_timestamp !== null) {
     last_check = moment.unix(Number(latest_report_timestamp)).from(moment());
   }
+
+  const [result, setResult] = React.useState({});
+  const [loadingResult, setLoadingResult] = React.useState(true);
+  React.useEffect(() => {
+    axios.get(`/api/v1/checker/${name}/latest-result`).then(resp => {
+      const { data } = resp;
+      console.log(data);
+      setLoadingResult(false);
+      setResult(data);
+    });
+  }, [name])
   return (
     <>
       <Divider style={{ margin: 0 }} />
@@ -65,6 +77,9 @@ const Checker = ({ checker }) => {
           <span className="updated-time">
             last checked {last_check}
           </span>
+          {!loadingResult &&
+            <JobStatus allPassed={result.all_passed} />
+          }
         </p>
       </div>
     </>
