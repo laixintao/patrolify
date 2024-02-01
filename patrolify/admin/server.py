@@ -10,8 +10,10 @@ from .admin_api import admin_api_blueprint
 logger = logging.getLogger(__name__)
 
 
-def create_app():
+def create_app(control_api):
     app = Flask(__name__, static_folder="frontend_dist", static_url_path="/static")
+
+    app.config.update(ENABLE_CONTROL_API=control_api)
 
     # Add prometheus wsgi middleware to route /metrics requests
     prometheus_wsgi_app = make_wsgi_app()
