@@ -30,7 +30,7 @@ class MainResult:
     all_passed: bool = True
     job_info: Dict[str, Dict] = dataclasses.field(default_factory=dict)
     start_job_id: str | None = None
-
+    manually_triggered: bool = False
 
 def generate_report(check_name, check_id):
     logger.info("Start to generate reports for %s check_id=%s", check_name, check_id)
@@ -57,6 +57,7 @@ def generate_report(check_name, check_id):
         parent_id = result["parent_target_id"]
         if parent_id is None:
             main_result.start_job_id = job_id
+            main_result.manually_triggered = result.get("manually_triggered", False)
         else:
             parent = main_result.job_info.setdefault(parent_id, {})
             parent.setdefault("child_job_ids", []).append(job_id)
@@ -127,7 +128,7 @@ def get_result_by_job_id(check_name, check_id, job_id):
 
 
 
-def store_check_result(result, target, check_name, check_id, job_id, parent_id):
+def store_check_result(result, target, check_name, check_id, job_id, parent_id, manually_triggered):
     data = {
         "job_id": job_id,
         "target": target,
@@ -136,6 +137,10 @@ def store_check_result(result, target, check_name, check_id, job_id, parent_id):
         "check_pass": None,
         "reason": None,
     }
+
+    # only store this when it's true
+    if manually_triggered:
+        data['manually_triggered'] = manually_triggered
 
     if result is None:
         pass

@@ -21,7 +21,7 @@ export default function CheckerLayout() {
         <H4>{checkerName}</H4>
       </Link>
 
-      <Button onClick={triggerCheckerNow} >Check Now </Button>
+      <Button onClick={triggerCheckerNow} intent="primary">Run this Checker Now!</Button>
       <Card className="job-table-list">
         <Outlet />
       </Card>

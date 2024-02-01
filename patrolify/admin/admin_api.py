@@ -80,7 +80,7 @@ def result_by_job_id(name, check_id, job_id):
 
 @admin_api_blueprint.route("/checker/<name>/enqueue", methods=["POST"])
 def enqueue_checker(name):
-    result = g.checker_queue.enqueue(trigger_target, name)
+    result = g.checker_queue.enqueue(trigger_target, name, True)
     logger.info("enqueue a job now, result: %s", result)
     return jsonify({})
 
