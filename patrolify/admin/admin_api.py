@@ -23,21 +23,25 @@ def triggers_list():
 
     list_of_job_instances = g.scheduler.get_jobs()
 
-    scheduled_triggers = list(j.args[0] for j in list_of_job_instances)
+    scheduled_triggers = list(
+        {"name": j.args[0], "description": j.args[1]} for j in list_of_job_instances
+    )
 
     checkers = []
     for trigger in scheduled_triggers:
-        report_path = get_latest_report_dir(trigger)
+        report_path = get_latest_report_dir(trigger['name'])
         if not report_path:
             checkers.append({
-                "name": trigger,
+                "name": trigger["name"],
+                "description": trigger["description"],
                 "latest_report_dir": None,
                 "latest_report_timestamp": None,
                 "report": None,
             })
             continue
         checkers.append({
-            "name": trigger,
+            "name": trigger["name"],
+            "description": trigger["description"],
             "latest_report_dir": str(report_path),
             "latest_report_timestamp": str(report_path.name),
             "report": get_report_by_path(report_path),

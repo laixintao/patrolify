@@ -23,7 +23,7 @@ def check_my_target(target):
         return False, f"The check is failed because ..."
 
 
-@trigger(cron_string="* * * * *")
+@trigger(cron_string="* * * * *", description="As a job example")
 def generate_jobs(time_target):
     my_check_list = []
     for target_id in my_check_list:
