@@ -24,6 +24,7 @@ class Global:
     role: Role = Role.WORKER
     redis = None
     result_path = None
+    checker_path = None
 
     def result_dir(self, check_name, check_id):
         """save jobs result"""

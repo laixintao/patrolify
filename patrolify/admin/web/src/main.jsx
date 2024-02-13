@@ -8,6 +8,7 @@ import CheckerDetailPage from "./CheckerDetailPage";
 import CheckerLayout from "./CheckerLayout";
 import CheckDetailPage from "./CheckDetailPage";
 import JobDetailPage from "./jobdetailpage/JobDetailPage";
+import FileExplorer from "./fileexplorer";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             index: true,
           },
         ],
+      },
+      {
+        path: "files",
+        element: <FileExplorer />
       },
     ],
   },
