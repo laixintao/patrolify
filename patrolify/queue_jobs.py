@@ -20,7 +20,7 @@ def check_target(target):
     return process_result(result, target)
 
 
-def trigger_target(funcname, manually_triggered=False):
+def trigger_target(funcname, manually_triggered=False, description=""):
     threadlocal.check_id = str(int(time.time()))
     threadlocal.check_name = funcname
 
