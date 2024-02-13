@@ -1,12 +1,12 @@
 import React from "react";
-import { Icon, Breadcrumbs, Breadcrumb, Spinner } from "@blueprintjs/core";
+import { Button, Icon, Breadcrumbs, Breadcrumb, Spinner } from "@blueprintjs/core";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function FileExplorer() {
 
-  let [searchParams, setSearchParams] = useSearchParams();
+  let [searchParams, _] = useSearchParams();
 
   let path = searchParams.get("path");
   let navigate = useNavigate();
@@ -44,7 +44,7 @@ export default function FileExplorer() {
     <Breadcrumbs items={BREADCRUMBS}
       breadcrumbRenderer={breadcrumbRenderer}
     />
-    {contentLoading ? <Spinner /> : <Content content={content} current={path}/>}
+    {contentLoading ? <Spinner /> : <Content content={content} current={path} />}
   </div>
 }
 
@@ -74,8 +74,8 @@ const Item = ({ isDir, name, current }) => {
   return <div>
 
     <Link to={`/files?path=${current}/${name}`}>
-<Icon icon={icon} /> {"  "} {name}
+      <Icon icon={icon} /> {"  "} {name}
     </Link>
 
-    </div>;
+  </div>;
 }
