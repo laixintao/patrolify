@@ -37,8 +37,12 @@ class TimeTriggerTarget(Target):
     def __init__(self) -> None:
         super().__init__()
         self.trigger_timestamp = time.time()
+        self.manually_triggered = False
 
     def __str__(self):
         datetime_obj = datetime.fromtimestamp(self.trigger_timestamp)
         formatted_string = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
-        return f"Trigger at {formatted_string}"
+        manual = ""
+        if self.manually_triggered:
+            manual = " (manually triggered)"
+        return f"Trigger at {formatted_string} {manual}"

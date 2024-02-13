@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint, jsonify
 from patrolify.globals import g
 from patrolify.consts import RESULT_FILE_NAME
+from patrolify.queue_jobs import trigger_target
 from patrolify.reports import (
     get_check_report,
     get_latest_check_ids,
@@ -75,6 +76,13 @@ def result_by_check_id(name, check_id):
 @admin_api_blueprint.route("/checker/<name>/<int:check_id>/<job_id>")
 def result_by_job_id(name, check_id, job_id):
     return jsonify(get_result_by_job_id(name, str(check_id), job_id))
+
+
+@admin_api_blueprint.route("/checker/<name>/enqueue", methods=["POST"])
+def enqueue_checker(name):
+    result = g.checker_queue.enqueue(trigger_target, name, True)
+    logger.info("enqueue a job now, result: %s", result)
+    return jsonify({})
 
 
 @admin_api_blueprint.route("/monitor-info")

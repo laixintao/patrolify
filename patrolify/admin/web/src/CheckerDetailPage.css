@@ -22,3 +22,8 @@ p.hint {
 .job-item-fail {
   color: red;
 }
+
+.manually-triggered {
+  font-weight: 800;
+  color: #8c3a90;
+}

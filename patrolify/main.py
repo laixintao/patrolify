@@ -205,13 +205,17 @@ def generate_reports(check_name, check_id, result_path):
     required=True,
     help="Where to save the results",
 )
-def admin(host, port, connection_limit, threads, python_checker, result_path):
+@click.option("--control-api/--no-control-api", default=True)
+def admin(
+    host, port, connection_limit, threads, python_checker, result_path, control_api
+):
     load_checkers(python_checker)
     g.result_path = result_path
     g.scheduler = Scheduler(
         queue=g.checker_queue, connection=g.checker_queue.connection
     )
-    app = create_app()
+
+    app = create_app(control_api=control_api)
     waitress.serve(
         app,
         host=host,

@@ -56,6 +56,7 @@ const CheckItem = ({ cid, index, checkDetail }) => {
       </Link>
       <JobStatus allPassed={checkDetail.all_passed} />
       <span>{index == 0 && "  (latest)"}</span>
+      {checkDetail.manually_triggered && <span className="manually-triggered"> (manually triggered)</span>}
     </div>
   );
 };

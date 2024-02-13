@@ -20,12 +20,14 @@ def check_target(target):
     return process_result(result, target)
 
 
-def trigger_target(funcname):
+def trigger_target(funcname, manually_triggered=False):
     threadlocal.check_id = str(int(time.time()))
     threadlocal.check_name = funcname
 
     logger.info("Start running the trigger function: %s", funcname)
     target = TimeTriggerTarget()
+    if manually_triggered:
+        target.manually_triggered = True
 
     redis = g.redis
     exat = int(time.time() + GLOBAL_TTL_SECONDS)
@@ -41,6 +43,9 @@ def trigger_target(funcname):
 
 
 def process_result(result, target):
+    manually_triggered = False
+    if hasattr(target, "manually_triggered"):
+        manually_triggered = target.manually_triggered
     if isinstance(result, tuple):
         g.reporter_queue.enqueue(
             store_check_result,
@@ -50,6 +55,7 @@ def process_result(result, target):
             target.check_id,
             target.job_id,
             target.parent_target,
+            manually_triggered,
         )
 
     if isinstance(result, types.GeneratorType):
@@ -67,6 +73,7 @@ def process_result(result, target):
                 target.check_id,
                 target.job_id,
                 target.parent_target,
+                manually_triggered,
             )
 
     incr_task_count_and_check_finsihed(target)
