@@ -21,6 +21,12 @@ export default function AppNavbar() {
         <Link to="/">
           <Button className={Classes.MINIMAL} icon="home" text="Home" />
         </Link>
+        <Link to="/files?path=checkers">
+          <Button className={Classes.MINIMAL} icon="code" text="Code Explorer" />
+        </Link>
+        <Link to="/files?path=results">
+          <Button className={Classes.MINIMAL} icon="box" text="History" />
+        </Link>
       </NavbarGroup>
       <NavbarGroup align="right">
         <Link to="https://github.com/laixintao/patrolify">

@@ -211,6 +211,7 @@ def admin(
 ):
     load_checkers(python_checker)
     g.result_path = result_path
+    g.checker_path = python_checker
     g.scheduler = Scheduler(
         queue=g.checker_queue, connection=g.checker_queue.connection
     )

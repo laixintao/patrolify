@@ -1,6 +1,7 @@
 import json
 import logging
-from flask import Blueprint, jsonify
+from pathlib import Path
+from flask import Blueprint, Response, jsonify, request
 from patrolify.globals import g
 from patrolify.consts import RESULT_FILE_NAME
 from patrolify.queue_jobs import trigger_target
@@ -29,7 +30,7 @@ def triggers_list():
 
     checkers = []
     for trigger in scheduled_triggers:
-        report_path = get_latest_report_dir(trigger['name'])
+        report_path = get_latest_report_dir(trigger["name"])
         if not report_path:
             checkers.append({
                 "name": trigger["name"],
@@ -87,6 +88,39 @@ def enqueue_checker(name):
     result = g.checker_queue.enqueue(trigger_target, name, True)
     logger.info("enqueue a job now, result: %s", result)
     return jsonify({})
+
+
+@admin_api_blueprint.route("/file")
+def get_file():
+    path = request.args.get("path")
+    logger.info("Get file path=%s", path)
+    if not path:
+        return Response("path in query params is requied", status=400)
+
+    if path.startswith("checkers"):
+        target = Path(g.checker_path) / path.removeprefix("checkers").removeprefix("/")
+    elif path.startswith("results"):
+        target = Path(g.result_path) / path.removeprefix("results").removeprefix("/")
+    else:
+        return Response(
+            f"path {path} is not allowed, only checkers path checkers and"
+            " result path results is allowed",
+            status=403,
+        )
+
+    if not target.exists():
+        return Response(f"{target} do not exist. {g.checker_path}", status=404)
+
+    if target.is_dir():
+        return jsonify({
+            "type": "directory",
+            "files": [{"name": x.name, "is_dir": x.is_dir()} for x in target.iterdir()],
+        })
+    if target.is_file():
+        with open(target) as f:
+            return jsonify({"type": "file", "content": f.read()})
+
+    return Response("unsupported type", status=400)
 
 
 @admin_api_blueprint.route("/monitor-info")
