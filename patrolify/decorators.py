@@ -20,7 +20,7 @@ def check(target_cls):
     return wrapper
 
 
-def trigger(interval_seconds=None, cron_string=None):
+def trigger(interval_seconds=None, cron_string=None, description=""):
     if not interval_seconds and not cron_string:
         raise UsageError("Must set interval_seconds or cron_string")
 
@@ -43,13 +43,13 @@ def trigger(interval_seconds=None, cron_string=None):
                 scheduled_time=datetime.utcnow(),
                 func=trigger_target,
                 interval=interval_seconds,
-                args=[funcname],
+                args=[funcname, description],
             )
         else:
             scheduler.cron(
                 cron_string,
                 func=trigger_target,
-                args=[funcname],
+                args=[funcname, description],
             )
         # TODO schedule jobs
         return func
