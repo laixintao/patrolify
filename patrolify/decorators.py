@@ -38,18 +38,19 @@ def trigger(interval_seconds=None, cron_string=None, description=""):
             interval_seconds,
             cron_string,
         )
+
         if interval_seconds:
             scheduler.schedule(
                 scheduled_time=datetime.utcnow(),
                 func=trigger_target,
                 interval=interval_seconds,
-                args=[funcname, description],
+                args=[funcname, False, description],
             )
         else:
             scheduler.cron(
                 cron_string,
                 func=trigger_target,
-                args=[funcname, description],
+                args=[funcname, False, description],
             )
         # TODO schedule jobs
         return func
