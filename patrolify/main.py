@@ -195,12 +195,14 @@ def generate_reports(check_name, check_id, result_path):
     type=click.Path(),
     default=None,
     help="Python checker script location",
+    required=True,
 )
 @click.option(
     "-r",
     "--result-path",
     type=click.Path(),
     default=None,
+    required=True,
     help="Where to save the results",
 )
 def admin(host, port, connection_limit, threads, python_checker, result_path):
