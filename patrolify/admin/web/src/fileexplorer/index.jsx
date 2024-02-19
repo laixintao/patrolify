@@ -27,6 +27,7 @@ export default function FileExplorer() {
   const [contentLoading, setContentLoading] = React.useState(true);
 
   React.useEffect(() => {
+    setContentLoading(true);
     axios.get("/api/v1/file", { params: { path } }).then(resp => {
       const { data } = resp;
       setContent(data);
