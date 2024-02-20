@@ -1,8 +1,8 @@
-import React from "react";
-import { Button, Icon, Breadcrumbs, Breadcrumb, Spinner } from "@blueprintjs/core";
-import { Link, useSearchParams } from "react-router-dom";
+import { Breadcrumb, Breadcrumbs, Icon, Spinner } from "@blueprintjs/core";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import "./fileexplorer.css"
 
 export default function FileExplorer() {
 
@@ -45,7 +45,9 @@ export default function FileExplorer() {
     <Breadcrumbs items={BREADCRUMBS}
       breadcrumbRenderer={breadcrumbRenderer}
     />
-    {contentLoading ? <Spinner /> : <Content content={content} current={path} />}
+    <div className="filecontent-box">
+      {contentLoading ? <Spinner /> : <Content content={content} current={path} />}
+    </div>
   </div>
 }
 
