@@ -1,4 +1,6 @@
 import dataclasses
+from rq.registry import FailedJobRegistry
+
 import glob
 import json
 import json
@@ -32,6 +34,7 @@ class MainResult:
     start_job_id: str | None = None
     manually_triggered: bool = False
 
+
 def generate_report(check_name, check_id):
     logger.info("Start to generate reports for %s check_id=%s", check_name, check_id)
     check_directory = g.result_dir(check_name, check_id)
@@ -49,8 +52,8 @@ def generate_report(check_name, check_id):
         target_name = result["target"]
         job_info = main_result.job_info.setdefault(job_id, {})
         job_info["target"] = target_name
-        job_info["run_success"] = result['run_success']
-        job_info["check_pass"] = result['check_pass']
+        job_info["run_success"] = result["run_success"]
+        job_info["check_pass"] = result["check_pass"]
         job_info.setdefault("child_job_ids", [])
 
         # save job's relation
@@ -84,6 +87,17 @@ def generate_report(check_name, check_id):
 
     logger.info("result has been writen to %s", report_directory)
     update_latest_check(check_name, check_id)
+
+    failed_job_clean_up()
+
+
+def failed_job_clean_up():
+    lock = Lock(g.redis, "patrolify:lock:cleanup_failed_jobs")
+    with lock:
+        registry = FailedJobRegistry(queue=g.checker_queue)
+
+        for job_id in registry.get_job_ids():
+            registry.remove(job_id)
 
 
 def update_latest_check(check_name, check_id):
@@ -127,8 +141,9 @@ def get_result_by_job_id(check_name, check_id, job_id):
     return report_result
 
 
-
-def store_check_result(result, target, check_name, check_id, job_id, parent_id, manually_triggered):
+def store_check_result(
+    result, target, check_name, check_id, job_id, parent_id, manually_triggered
+):
     data = {
         "job_id": job_id,
         "target": target,
@@ -140,7 +155,7 @@ def store_check_result(result, target, check_name, check_id, job_id, parent_id, 
 
     # only store this when it's true
     if manually_triggered:
-        data['manually_triggered'] = manually_triggered
+        data["manually_triggered"] = manually_triggered
 
     if result is None:
         pass
