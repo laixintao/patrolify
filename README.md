@@ -35,3 +35,7 @@ Then you need to run 4 components after installation:
 Architecture:
 
 ![](docs/patrolify-diagram.jpg)
+
+## How to Write Checker?
+
+Please see [How to Write Checker?](./docs/how-to-write-checker.md).
