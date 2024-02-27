@@ -3,50 +3,12 @@
 Do some checks every day, so that you can read the "news" in the morning while
 drinking coffee.
 
-## Install
+## Install and Deploy
 
-## How to write a check?
+All of the components are packaged to a Python package, install via:
 
-### Define the "target" you want to check
-
-```python
-from patrolify import Target
-
-class IPTarget(Target):
-    def __init__(self, ip):
-        self.ip = ip
-```
-
-### Define how to check that "target"
-
-```python
-from patrolify import check
-
-@check(IPTarget)
-def check_ip(target):
-   return True, "it's ok"
-```
-
-A check function can:
-
-- generates more targets: as long as the target can be checked by another
-  checker;
-- or return True/False to indicate the check was passed or not, plus a string
-  indicate the extra information
-
-### Test Your Checker
-
-In local environment, you can test your checker from `__main__`. But you need
-to fire `local_test_setup()` first.
-
-For example, you can write this in your `checker.py`:
-
-```python
-if __name__ == '__main__':
-    from patrolify.utils import local_test_setup
-    local_test_setup()
-
-    print(check_ip(IPTarget("127.0.0.1")))
+```shell
+pip install patrolify
 ```
 
 ### How to deploy?
@@ -56,11 +18,6 @@ Reporter was written in pure Python, requirements:
 - Python 3.11+
 - Redis 5.0+
 
-Installation(The name `patrolify` was taken on Pypi):
-
-```shell
-pip install patrolify
-```
 
 Then you need to run 4 components after installation:
 
