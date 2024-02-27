@@ -1,4 +1,4 @@
-### Define the "target" you want to check
+### how to Write Checker?
 
 ### Your First Checker
 
